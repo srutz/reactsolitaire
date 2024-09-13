@@ -12,6 +12,10 @@ const router = createBrowserRouter([
         path: "/",
         element: <Game><Content /></Game>,
     },
+    {
+        path: "/reactsolitaire",
+        element: <Game><Content /></Game>,
+    },
     { path: "*", element: <div>We haven't found where you were looking for</div> },
 ])
 
