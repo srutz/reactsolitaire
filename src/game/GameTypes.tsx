@@ -25,7 +25,7 @@ export type Pile = {
  * Define the SolitaireState type, representing the state of a Solitaire game.
  */
 export type SolitaireState = {
-    status: "stopped" | "running" | "won" | "lost"
+    status: "stopped" | "running" | "won" | "launching"
     stock: Pile     // stock pile, containing the remaining cards.
     waste: Pile     // waste pile, containing the discarded cards.
 

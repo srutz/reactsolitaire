@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Menubar } from "./components/Menubar";
 import { ConfirmDialog, ModalDialog } from "./components/ModalDialog";
 import { Game, useGameContext } from "./game/Game";
 import { GameRenderer } from "./game/GameRenderer";
 import { ExternalLink } from "./components/ExternalLink";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { useWindowSize } from "./hooks/WindowSize";
 
 
 const router = createBrowserRouter([
@@ -28,6 +29,14 @@ export function Content() {
     const [newGameConfirmShown, setNewGameConfirmShown] = useState(false)
     const [stopGameConfirmShown, setStopGameConfirmShown] = useState(false)
     const context = useGameContext()
+    const size = useWindowSize()
+
+    const startNewGame = useCallback(() => {
+        context?.dispatch({ type: "game-new" })
+        setTimeout(() => {
+            context?.dispatch({ type: "game-launched" })
+        }, 250)
+    }, [])
 
     const handleMenubarAction = (action: string) => {
         console.log(action)
@@ -37,7 +46,7 @@ export function Content() {
             if (context?.state?.status == "running") {
                 setNewGameConfirmShown(true)
             } else {
-                context?.dispatch({ type: "game-new" })
+                startNewGame()
             }
         } else if ("game-stop" == action) {
             if (context?.state?.status == "running") {
@@ -51,8 +60,10 @@ export function Content() {
     return (
         <div className="h-1 grow shrink flex flex-col">
             <Menubar handleClick={handleMenubarAction} />
-            <div className="relative bg-orange-200 h-1 grow shrink flex flex-col overflow-hidden">
-                <GameRenderer></GameRenderer>
+            <div className="relative bg-indigo-800 h-1 grow shrink flex flex-col overflow-hidden">
+                {size.width < 820
+                    ? <div className="flex grow items-center justify-center text-center text-7xl font-bold p-4 text-white">Please use a wider browser window</div>
+                    :<GameRenderer></GameRenderer>}
             </div>
             <ModalDialog show={aboutShown} onClose={() => { setAboutShown(false) }} title="About React Solitaire">
                 <p>Small Solitair Game in React. (For demo purposes only.)</p>
@@ -65,7 +76,7 @@ export function Content() {
             <ConfirmDialog 
                     show={newGameConfirmShown} 
                     onCancel={() => setNewGameConfirmShown(false)} 
-                    onConfirm={() => { setNewGameConfirmShown(false); context?.dispatch({ type: "game-new" }) }} 
+                    onConfirm={() => { setNewGameConfirmShown(false); startNewGame() }} 
                     title="Confirm New Game">
                 <p>Really start a new game?</p>
             </ConfirmDialog>

@@ -75,6 +75,7 @@ export type FragementState = Pick<SolitaireState, "stock" | "waste" | "stacks" |
 
 export type GameAction =
     | { type: "game-new" }
+    | { type: "game-launched" }
     | { type: "game-stop" }
     | { type: "game-reset", stateFragment: FragementState }
     | { type: "draw-stock"; card: PlayingCard }
@@ -88,6 +89,11 @@ const gameReducer = (state: SolitaireState, action: GameAction) => {
     switch (action.type) {
         case "game-new": {
             const s = makeInitialState()
+            s.status = "launching"
+            return s
+        }
+        case "game-launched": {
+            const s = { ...state }
             s.status = "running"
             return s
         }

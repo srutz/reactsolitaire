@@ -13,8 +13,8 @@ export function getStackingDistance(pileType: PileType) {
     switch (pileType) {
         case "table": return 20
         case "stack": return 4
-        case "stock": return 2
-        case "waste": return 2
+        case "stock": return 3
+        case "waste": return 3
     }
 }
 
@@ -175,15 +175,12 @@ export function GameRenderer() {
             setDestinationPile(destinationPile)
         }
     }
-    const debug = false
     const getBanner = () => {
         switch (gameContext.state.status) {
-            case "stopped":
-                return <BannerPanel>React Solitaire</BannerPanel>
             case "won":
                 return <OverlayPanel>You won!</OverlayPanel>
-            case "lost":
-                return <OverlayPanel>You lost!</OverlayPanel>
+            case "stopped":
+                return <BannerPanel>React Solitaire</BannerPanel>
             default:
                 return undefined
         }
@@ -192,10 +189,10 @@ export function GameRenderer() {
         <RendererContext.Provider value={{ draggedCard, dragPosition, destinationPile, allDraggedCards }}>
             <div ref={elemRef} className="h-1 grow shrink flex flex-col bg-gray-500 p-4 relative"
                 onMouseDown={mouseDown} onMouseMove={mouseMove} onMouseUp={endDrag} onMouseLeave={endDrag}>
-                <PileRenderer pile={gameContext.state.stock} clickHandler={clickHandler} debug={debug} />
-                <PileRenderer pile={gameContext.state.waste} clickHandler={clickHandler} debug={debug} />
-                {gameContext.state.stacks.map((pile, i) => <PileRenderer key={"stack" + i} pile={pile} clickHandler={clickHandler} debug={debug} />)}
-                {gameContext.state.tables.map((pile, i) => <PileRenderer key={"table" + i} pile={pile} clickHandler={clickHandler} debug={debug} />)}
+                <PileRenderer pile={gameContext.state.stock} clickHandler={clickHandler} />
+                <PileRenderer pile={gameContext.state.waste} clickHandler={clickHandler} />
+                {gameContext.state.stacks.map((pile, i) => <PileRenderer key={"stack" + i} pile={pile} clickHandler={clickHandler} />)}
+                {gameContext.state.tables.map((pile, i) => <PileRenderer key={"table" + i} pile={pile} clickHandler={clickHandler} />)}
             </div>
             {getBanner()}
         </RendererContext.Provider>

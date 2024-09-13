@@ -6,25 +6,9 @@ import { PlayingCard } from "./GameTypes"
 
 export type CardRendererProps = { card: PlayingCard } & ComponentProps<"div">
 
-function ColoredSuit({ suit }: { suit: string }) {
-    switch (suit) {
-        case "hearts": return <span className="text-red-500 text-2xl">♥</span>
-        case "diamonds": return <span className="text-red-500 text-2xl">♦</span>
-        case "clubs": return <span className="text-black text-2xl">♣</span>
-        case "spades": return <span className="text-black text-2xl">♠</span>
-    }
-}
 
 
-function TextCardRenderer({ card, onClick }: CardRendererProps) {
-    return (
-        <div className="flex items-center cursor-pointer" onClick={onClick}>
-            <ColoredSuit suit={card.suit} />-{card.rank}
-        </div>
-    )
-}
-
-function ImageCardRenderer({ card, ...props }: CardRendererProps) {
+export function CardRenderer({ card, ...props }: CardRendererProps) {
     const image = card.side == "back" ? "cards/back.png" : GameUtil.cardToImage(card)
     return (
         <div data-card={GameUtil.cardId(card)} className="flex items-center cursor-pointer select-none absolute" {...props} >
@@ -35,6 +19,3 @@ function ImageCardRenderer({ card, ...props }: CardRendererProps) {
     )
 }
 
-export function CardRenderer({ debug, ...props }: { debug?: boolean } & CardRendererProps) {
-    return debug ? TextCardRenderer(props) : ImageCardRenderer(props)
-}

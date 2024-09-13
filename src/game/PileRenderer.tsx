@@ -11,11 +11,10 @@ import { useGameContext } from "./Game"
 
 export type CardPileProps = {
     pile: Pile,
-    debug?: boolean,
     clickHandler: (pile: Pile, card?: PlayingCard) => void
 }
 
-export function PileRenderer({ pile, clickHandler, debug }: CardPileProps) {
+export function PileRenderer({ pile, clickHandler }: CardPileProps) {
     const rendererContext = useRendererContext()
     const gameContext = useGameContext()
     if (!rendererContext) {
@@ -23,15 +22,6 @@ export function PileRenderer({ pile, clickHandler, debug }: CardPileProps) {
     }
     const { draggedCard, dragPosition, allDraggedCards, destinationPile } = rendererContext
     //console.log("dragPosition.x = " + dragPosition?.x + ", dragPosition.y = " + dragPosition?.y + ", draggedCard = " + draggedCard)
-    if (debug) {
-        return (
-            <div className="flex gap-1 items-center h-16">
-                <div className="w-24">{pile.type}[{pile.cards.length}]: </div>
-                {pile.cards.map((c) => 
-                    <CardRenderer debug key={GameUtil.cardId(c)} card={c} onClick={() => { clickHandler(pile, c) }} />)}
-            </div>
-        )
-    }
     const dragStartPile = GameUtil.findPileForCard(gameContext?.state, draggedCard)
     const x0 = 24
     const y0 = 24
@@ -49,6 +39,7 @@ export function PileRenderer({ pile, clickHandler, debug }: CardPileProps) {
         top: y + "px",
         left: x + "px",
     }
+   
     const overlayStyle: CSSProperties = {
         left: x + "px",
         top: (y + (
@@ -69,7 +60,6 @@ export function PileRenderer({ pile, clickHandler, debug }: CardPileProps) {
             s.left = (dragPosition?.x || 0) + "px"
             s.top  = ((dragPosition?.y || 0) + index * getStackingDistance(pile.type)) + "px"
             s.zIndex = DRAG_LAYER
-
         }
         return s
     }
