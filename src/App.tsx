@@ -6,6 +6,7 @@ import { GameRenderer } from "./game/GameRenderer";
 import { ExternalLink } from "./components/ExternalLink";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { useWindowSize } from "./hooks/WindowSize";
+import { StatsPanel } from "./game/StatsPanel";
 
 
 const router = createBrowserRouter([
@@ -35,7 +36,6 @@ export function Content() {
         context?.dispatch({ type: "game-new" })
         setTimeout(() => {
             context?.dispatch({ type: "game-launched" })
-            console.log("done launching")
         }, 1_000)
     }, [])
 
@@ -66,6 +66,7 @@ export function Content() {
                     ? <div className="flex grow items-center justify-center text-center text-7xl font-bold p-4 text-white">Please use a wider browser window</div>
                     :<GameRenderer></GameRenderer>}
             </div>
+            <StatsPanel></StatsPanel>
             <ModalDialog show={aboutShown} onClose={() => { setAboutShown(false) }} title="About React Solitaire">
                 <p>Small Solitair Game in React. (For demo purposes only.)</p>
                 <p>by Stepan Rutz <a href="mailto:stepan.rutz@gmx.de">stepan.rutz AT gmx.de</a>.</p>

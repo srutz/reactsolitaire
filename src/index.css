@@ -56,6 +56,3 @@ a:hover {
     @apply bg-white hover:bg-gray-100 text-gray-500;
 }
 
-[data-cardXX] {
-    transition: all 90ms ease-out;
-}

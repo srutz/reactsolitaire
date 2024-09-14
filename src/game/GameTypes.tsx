@@ -21,11 +21,18 @@ export type Pile = {
     index: number
 }
 
+export type GameStats = {
+    points: number
+    moves: number
+    startTime: number
+}
+
 /*
  * Define the SolitaireState type, representing the state of a Solitaire game.
  */
 export type SolitaireState = {
     status: "stopped" | "running" | "won" | "launching"
+    stats: GameStats,
     stock: Pile     // stock pile, containing the remaining cards.
     waste: Pile     // waste pile, containing the discarded cards.
 
@@ -63,6 +70,7 @@ export function makeInitialState() {
     }
     const state: SolitaireState = { 
         status: "stopped",
+        stats: { points: 0, moves: 0, startTime: new Date().getTime() },
         stock, waste, tables, stacks }
     return state
 }

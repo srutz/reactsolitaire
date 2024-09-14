@@ -69,9 +69,10 @@ function checkForWin(s: SolitaireState) {
     if (completeStacks == 4) {
         s.status = "won"
     }
+    s.stats.moves++
 }
 
-export type FragementState = Pick<SolitaireState, "stock" | "waste" | "stacks" | "tables">
+export type FragementState = Pick<SolitaireState, "stats" | "stock" | "waste" | "stacks" | "tables">
 
 export type GameAction =
     | { type: "game-new" }
@@ -103,12 +104,14 @@ const gameReducer = (state: SolitaireState, action: GameAction) => {
             return s
         }
         case "game-reset": {
+            /* reset to the state given in the action */
             const s = makeInitialState()
             s.status = "running"
             s.stock = action.stateFragment.stock
             s.waste = action.stateFragment.waste
             s.stacks = action.stateFragment.stacks
             s.tables = action.stateFragment.tables
+            s.stats = action.stateFragment.stats
             return s
         }
         case "draw-stock": {
@@ -118,8 +121,8 @@ const gameReducer = (state: SolitaireState, action: GameAction) => {
                 s.stock.cards.splice(stockIndex, 1)
                 action.card.side = "front"
                 s.waste.cards.push(action.card)
+                checkForWin(s)
             }
-            checkForWin(s)
             return s
         }
         case "empty-stock": {
@@ -129,8 +132,9 @@ const gameReducer = (state: SolitaireState, action: GameAction) => {
                 s.stock.cards.reverse()
                 s.stock.cards.forEach(c => c.side = "back")
                 s.waste.cards = []
+                checkForWin(s)
+                s.stats.points -= 15
             }
-            checkForWin(s)
             return s
         }
         case "draw-waste": {
@@ -144,9 +148,10 @@ const gameReducer = (state: SolitaireState, action: GameAction) => {
                 if (moveAllowed) {
                     s.waste.cards.splice(wasteIndex, 1)
                     destinationStack.cards.push(action.card)
+                    checkForWin(s)
+                    s.stats.points += 10
                 }
             }
-            checkForWin(s)
             return s
         }
         /* draw from a table, try to put "card" onto a stack if its the card's turn */
@@ -158,6 +163,8 @@ const gameReducer = (state: SolitaireState, action: GameAction) => {
                 if (tableIndex != -1 && tableIndex == table.cards.length - 1) {
                     if (action.side == "back") {
                         action.card.side = "front"
+                        checkForWin(s)
+                        s.stats.points += 10
                     } else {
                         /* try to put on stack */
                         const destinationStackIndex = suitToIndex(action.card.suit)
@@ -166,11 +173,12 @@ const gameReducer = (state: SolitaireState, action: GameAction) => {
                         if (moveAllowed) {
                             table.cards.splice(tableIndex, 1)
                             destinationStack.cards.push(action.card)
+                            checkForWin(s)
+                            s.stats.points += 10
                         }
                     }
                 }
             }
-            checkForWin(s)
             return s
         }
         /* dropping several "cards" onto a table */
@@ -188,10 +196,10 @@ const gameReducer = (state: SolitaireState, action: GameAction) => {
                         Util.removeElement(pile.cards, curr)
                         action.table.cards.push(curr)
                         movedCards.push(curr)
+                        checkForWin(s)
                     }
                 }
             }
-            checkForWin(s)
             return s
         }
         default:
@@ -237,6 +245,7 @@ export function stateToExternalForm(s: SolitaireState) {
         waste: s.waste,
         stacks: s.stacks,
         tables: s.tables,
+        stats: s.stats,
     }
     const external = JSON.stringify(e)
     const r = Pako.gzip(external)
