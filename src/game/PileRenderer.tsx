@@ -1,7 +1,7 @@
 import { CSSProperties, useCallback } from "react"
 import { Pile, PlayingCard } from "./GameTypes"
 import { CardRenderer, Point } from "./CardRenderer"
-import { CARD_HEIGHT, CARD_WIDTH, getStackingDistance, Size, useRendererContext } from "./GameRenderer"
+import { Geometry, getStackingDistance, Size, useRendererContext } from "./GameRenderer"
 import { GameUtil } from "./CardUtil"
 import { PileBackground } from "./PileBackground"
 import { PileOverlay } from "./PileOverlay"
@@ -12,12 +12,11 @@ const DRAG_LAYER = 1000
 
 
 /* gets the left-top anchor position for a pile */
-function getPilePosition(availableSize: Size, pile: Pile) {
-    const xspace = 16
-    const xdist = CARD_WIDTH + xspace
-    const ydist = CARD_HEIGHT + 30 * getStackingDistance("stack")
+function getPilePosition(availableSize: Size, geometry: Geometry, pile: Pile) {
+    const xdist = geometry.cardWidth + geometry.xgap
+    const ydist = geometry.cardHeight + 30 * getStackingDistance(geometry.scale, "stack")
     //console.log("availableSize.width = " + availableSize.width)
-    const x0 = Math.floor((availableSize.width - (6 * xspace + 7 * CARD_WIDTH)) / 2)
+    const x0 = Math.floor((availableSize.width - (6 * geometry.xgap + 7 * geometry.cardWidth)) / 2)
     const y0 = 24
     const position: Point = { x: 0, y: 0 }
     switch (pile.type) {
@@ -42,10 +41,16 @@ export function PileRenderer({ pile, clickHandler }: CardPileProps) {
     if (!rendererContext) {
         return <div>no renderer context</div>
     }
-    const { draggedCard, dragPosition, allDraggedCards, destinationPile, availableSize } = rendererContext
+    const { 
+        draggedCard, 
+        dragPosition, 
+        allDraggedCards, 
+        destinationPile, 
+        geometry,
+        availableSize } = rendererContext
     //console.log("dragPosition.x = " + dragPosition?.x + ", dragPosition.y = " + dragPosition?.y + ", draggedCard = " + draggedCard)
     const dragStartPile = GameUtil.findPileForCard(gameContext?.state, draggedCard)
-    let { x, y } = getPilePosition(availableSize, pile)
+    let { x, y } = getPilePosition(availableSize, geometry, pile)
     const style: CSSProperties = {
         top: y + "px",
         left: x + "px",
@@ -57,7 +62,7 @@ export function PileRenderer({ pile, clickHandler }: CardPileProps) {
             dragStartPile == pile && draggedCard 
             ? Math.max(0, dragStartPile.cards.indexOf(draggedCard) - 1)
             : Math.max(0, pile.cards.length - 1))
-            * getStackingDistance(pile.type)) + "px",
+            * getStackingDistance(geometry.scale, pile.type)) + "px",
     }
 
 
@@ -80,12 +85,12 @@ export function PileRenderer({ pile, clickHandler }: CardPileProps) {
 
     const computePosition = useCallback((pile: Pile, card: PlayingCard, cardIndex: number) => {
         const index = allDraggedCards.indexOf(card)
-        const position = getPilePosition(availableSize, pile)
+        const position = getPilePosition(availableSize, geometry, pile)
         if (index == -1) {
-            position.y = y + cardIndex * getStackingDistance(pile.type)
+            position.y = y + cardIndex * getStackingDistance(geometry.scale, pile.type)
         } else {
             position.x = dragPosition?.x || 0
-            position.y  = (dragPosition?.y || 0) + index * getStackingDistance(pile.type)
+            position.y  = (dragPosition?.y || 0) + index * getStackingDistance(geometry.scale, pile.type)
         }
         if (["stopped", "won"].indexOf(gameContext?.state.status || "") != -1 ) {
             position.x = -300
@@ -96,17 +101,18 @@ export function PileRenderer({ pile, clickHandler }: CardPileProps) {
 
 
     return <>
-        <PileBackground pile={pile} style={style} onClick={() => { clickHandler(pile) }} />
+        <PileBackground pile={pile} geometry={geometry} style={style} onClick={() => { clickHandler(pile) }} />
         {pile.cards.map((card, i) =>
             <CardRenderer 
                 key={i} /* GameUtil.cardId(c) */
                 data-card={GameUtil.cardId(card)} 
                 card={card}
+                width={geometry.cardWidth}
                 durationMs={computeDuration()}
                 delayMs={computeDelay(pile, i)}
                 position={computePosition(pile, card, i)}
                 zIndex={computeZIndex(card)}
                 onClick={() => { clickHandler(pile, card) }} />)}
-        {destinationPile == pile && <PileOverlay pile={pile} style={overlayStyle} />}
+        {destinationPile == pile && <PileOverlay pile={pile} geometry={geometry} style={overlayStyle} />}
     </>
 }

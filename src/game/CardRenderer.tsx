@@ -1,6 +1,5 @@
 import { ComponentProps, CSSProperties } from "react"
 import { GameUtil } from "./CardUtil"
-import { CARD_WIDTH } from "./GameRenderer"
 import { PlayingCard } from "./GameTypes"
 
 
@@ -12,6 +11,7 @@ export type Point = {
 
 export type CardRendererProps = { 
     card: PlayingCard 
+    width: number
     position?: Point
     durationMs?: number
     delayMs?: number
@@ -19,11 +19,11 @@ export type CardRendererProps = {
 } & ComponentProps<"div">
 
 
-export function CardRenderer({ card, ...props }: CardRendererProps) {
+export function CardRenderer({ card, width, ...props }: CardRendererProps) {
     const { position, durationMs = 0, delayMs = 0 } = props
     const image = card.side == "back" ? "cards/back.png" : GameUtil.cardToImage(card)
     const style: CSSProperties = {
-        width: CARD_WIDTH + "px",
+        width: width + "px",
         transitionProperty: "all",
         transitionDuration: durationMs + "ms",
         transitionDelay: delayMs + "ms",

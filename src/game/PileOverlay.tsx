@@ -1,12 +1,12 @@
 import { ComponentProps, CSSProperties } from "react";
 import { GameUtil } from "./CardUtil";
 import { Pile } from "./GameTypes";
-import { CARD_HEIGHT, CARD_WIDTH } from "./GameRenderer";
+import { Geometry } from "./GameRenderer";
 
-export function PileOverlay({ pile, ...props }: { pile: Pile } & ComponentProps<"div">) {
+export function PileOverlay({ pile, geometry, ...props }: { pile: Pile, geometry: Geometry } & ComponentProps<"div">) {
     const style: CSSProperties = { ...(props.style || {}),
-        width: CARD_WIDTH + "px", 
-        height: CARD_HEIGHT + "px",
+        width: geometry.cardWidth + "px", 
+        height: geometry.cardHeight + "px",
     }
 
     return (

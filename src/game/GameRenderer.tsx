@@ -5,16 +5,36 @@ import { PileRenderer } from "./PileRenderer"
 import { GameUtil } from "./CardUtil"
 import { Pile, PileType, PlayingCard, SolitaireState } from "./GameTypes"
 
+/*
 const SIZE_SCALE = 1.25
+export const XGAP = 12 * SIZE_SCALE
 export const CARD_WIDTH = Math.floor(80 * SIZE_SCALE)
 export const CARD_HEIGHT = Math.floor(110 * SIZE_SCALE)
+*/
 
-export function getStackingDistance(pileType: PileType) {
+export type Geometry = {
+    scale: number
+    xgap: number
+    cardWidth: number
+    cardHeight: number
+}
+
+export function makeGeometry(scale: number) {
+    return {
+        scale: scale,
+        xgap: Math.floor(scale * 16),
+        cardWidth: Math.floor(scale * 100),
+        cardHeight: Math.floor(scale * 138),
+    } 
+
+}
+
+export function getStackingDistance(scale: number, pileType: PileType) {
     switch (pileType) {
-        case "table": return 20
-        case "stack": return 4
-        case "stock": return 3
-        case "waste": return 3
+        case "table": return Math.floor(scale * 20) 
+        case "stack": return Math.floor(scale * 4)
+        case "stock": return Math.floor(scale * 3)
+        case "waste": return Math.floor(scale * 3)
     }
 }
 
@@ -28,6 +48,7 @@ export type RendererContextType = {
     allDraggedCards: PlayingCard[]
     dragPosition?: { x: number, y: number }
     destinationPile?: Pile
+    geometry: Geometry
     availableSize: Size
 }
 
@@ -85,9 +106,8 @@ function OverlayPanel({ children }: { children?: ReactNode }) {
 
 
 export function GameRenderer() {
-    /*const windowSize =*/ useWindowSize()
+    const windowSize = useWindowSize()
     const gameContext = useGameContext()
-
     const elemRef = useRef<HTMLDivElement>(null)
     const [dragging, setDragging] = useState(false)
     const [draggedCard, setDraggedCard] = useState<PlayingCard | undefined>()
@@ -107,6 +127,14 @@ export function GameRenderer() {
         setDragging(false)
         setDestinationPile(undefined)
     }, [draggedCard, destinationPile, gameContext, gameContext])
+
+    let scale = 1
+    if (windowSize.width >= 1200 && windowSize.height >= 900) {
+        scale = 1.5
+    } else if (windowSize.width >= 1080 && windowSize.height >= 750) {
+        scale = 1.25
+    }
+    const geometry = makeGeometry(scale)
 
     if (!gameContext?.state) {
         return <div>Not initialized</div>
@@ -197,7 +225,7 @@ export function GameRenderer() {
     }
     const availableSize = { width: elemRef.current?.clientWidth || 0, height: elemRef.current?.clientHeight || 0 }
     return (
-        <RendererContext.Provider value={{ draggedCard, dragPosition, destinationPile, allDraggedCards, availableSize }}>
+        <RendererContext.Provider value={{ draggedCard, dragPosition, destinationPile, allDraggedCards, geometry, availableSize }}>
             <div ref={elemRef} className="h-1 grow shrink flex flex-col bg-gray-500 p-4 relative"
                 onMouseDown={mouseDown} onMouseMove={mouseMove} onMouseUp={endDrag} onMouseLeave={endDrag}>
                 <PileRenderer pile={gameContext.state.stock} clickHandler={clickHandler} />
