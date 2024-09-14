@@ -1,4 +1,4 @@
-import { createContext, Dispatch, ReactNode, useContext, useEffect, useReducer } from "react"
+import { createContext, Dispatch, ReactNode, useContext, useEffect, useReducer, useState } from "react"
 import { Suit, Pile, PlayingCard, SolitaireState, makeInitialState, Rank, Side } from "./GameTypes"
 import { GameUtil } from "./CardUtil"
 import { Util } from "../components/Util"
@@ -209,12 +209,14 @@ export function useGameContext() {
     return useContext(GameContext)
 }
 
+/* convert a byte array to a url-safe string */
 function data2urlsafe(bytes: Uint8Array) {
     let base64String = btoa(String.fromCharCode(...bytes))
     base64String = base64String.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
     return base64String
 }
 
+/* convert a url-safe string to a byte array */
 function urlsafe2data(base64String: string) {
     base64String = base64String.replace(/-/g, '+').replace(/_/g, '/')
     while (base64String.length % 4) {
@@ -228,6 +230,7 @@ function urlsafe2data(base64String: string) {
     return bytes
 }
 
+/* take the solitaire state and convert it to a url-safe string */
 export function stateToExternalForm(s: SolitaireState) {
     const e = {
         stock: s.stock,
@@ -238,14 +241,18 @@ export function stateToExternalForm(s: SolitaireState) {
     const external = JSON.stringify(e)
     const r = Pako.gzip(external)
     const urldata = data2urlsafe(r)
-    //console.log(external.length, r.length, urldata.length)
     return urldata
 }
 
 export function Game({ children }: { children: ReactNode }) {
     const [ searchParams, setSearchParams ] = useSearchParams()
     const [state, dispatch] = useReducer(gameReducer, initialState)
+    const [restoringState, setRestoringState] = useState(false)
     useEffect(() => {
+        /* do nothing if currently restoring state */
+        if (restoringState) {
+            return
+        }
         if (state.status === "running") {
             setSearchParams({ s: stateToExternalForm(state) })
         } else {
@@ -254,13 +261,15 @@ export function Game({ children }: { children: ReactNode }) {
     }, [state])
     useEffect(() => {
         const externalstate = searchParams.get("s")
-        //console.log("apply state: " + externalstate)
-        //console.log(" curr state: " + stateToExternalForm(state))
         if (externalstate && externalstate != stateToExternalForm(state)) {
             const r = urlsafe2data(externalstate)
             const raw = Pako.ungzip(r, { to: "string" })
             const fragment = JSON.parse(raw) as FragementState
+            setRestoringState(true)
             dispatch({ type: "game-reset", stateFragment: fragment })
+            setTimeout(() => {
+                setRestoringState(false)
+            }, 1)
         }
     }, [searchParams])
     return (
