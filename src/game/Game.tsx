@@ -1,4 +1,4 @@
-import { createContext, Dispatch, ReactNode, useContext, useEffect, useReducer, useState } from "react"
+import { act, createContext, Dispatch, ReactNode, useContext, useEffect, useReducer, useState } from "react"
 import { Suit, Pile, PlayingCard, SolitaireState, makeInitialState, Rank, Side } from "./GameTypes"
 import { GameUtil } from "./CardUtil"
 import { Util } from "../components/Util"
@@ -161,7 +161,7 @@ const gameReducer = (state: SolitaireState, action: GameAction) => {
             if (table) {
                 const tableIndex = table.cards.findIndex(c => c == action.card)
                 if (tableIndex != -1 && tableIndex == table.cards.length - 1) {
-                    if (action.side == "back") {
+                    if (action.side == "back" && action.card.side == "back") {
                         action.card.side = "front"
                         checkForWin(s)
                         s.stats.points += 10
@@ -174,7 +174,7 @@ const gameReducer = (state: SolitaireState, action: GameAction) => {
                             table.cards.splice(tableIndex, 1)
                             destinationStack.cards.push(action.card)
                             checkForWin(s)
-                            s.stats.points += 10
+                            //s.stats.points += 10
                         }
                     }
                 }
@@ -190,12 +190,13 @@ const gameReducer = (state: SolitaireState, action: GameAction) => {
             if (pile && pile != action.table && action.cards.length > 0) {
                 const moveAllowed = tableMoveAllowed(action.table, action.cards[0])
                 if (moveAllowed) {
-                    const movedCards: PlayingCard[] = []
                     for (let i = 0; i < action.cards.length; i++) {
                         const curr = action.cards[i]
                         Util.removeElement(pile.cards, curr)
                         action.table.cards.push(curr)
-                        movedCards.push(curr)
+                        if (pile.type == "stack") {
+                            s.stats.points -= 5
+                        }
                         checkForWin(s)
                     }
                 }
