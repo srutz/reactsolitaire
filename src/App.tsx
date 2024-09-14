@@ -35,11 +35,12 @@ export function Content() {
         context?.dispatch({ type: "game-new" })
         setTimeout(() => {
             context?.dispatch({ type: "game-launched" })
-        }, 250)
+            console.log("done launching")
+        }, 1_000)
     }, [])
 
     const handleMenubarAction = (action: string) => {
-        console.log(action)
+        //console.log(action)
         if ("about" == action) {
             setAboutShown(true)
         } else if ("game-new" == action) {
@@ -76,14 +77,20 @@ export function Content() {
             <ConfirmDialog 
                     show={newGameConfirmShown} 
                     onCancel={() => setNewGameConfirmShown(false)} 
-                    onConfirm={() => { setNewGameConfirmShown(false); startNewGame() }} 
+                    onConfirm={() => { 
+                        setNewGameConfirmShown(false);
+                        context?.dispatch({ type: "game-stop" }) 
+                        setTimeout(startNewGame, 500) }} 
                     title="Confirm New Game">
                 <p>Really start a new game?</p>
             </ConfirmDialog>
             <ConfirmDialog 
                     show={stopGameConfirmShown} 
                     onCancel={() => setStopGameConfirmShown(false)} 
-                    onConfirm={() => { setStopGameConfirmShown(false); context?.dispatch({ type: "game-stop" }) }} 
+                    onConfirm={() => { 
+                        setStopGameConfirmShown(false);                         
+                        context?.dispatch({ type: "game-stop" }) 
+                    }} 
                     title="Confirm Stop Game">
                 <p>Really end the current game?</p>
             </ConfirmDialog>

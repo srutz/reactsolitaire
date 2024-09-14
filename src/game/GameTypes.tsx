@@ -47,7 +47,7 @@ export function makeInitialState() {
         }
     }
     Util.shuffle(deck)
-    console.log("init with " + deck.length + " cards")
+    //console.log("init with " + deck.length + " cards")
     const stock: Pile = { type: "stock", index: -1, cards: [...deck.splice(0, 24)] }
     const waste: Pile = { type: "waste", index: -1, cards: [] }
     const stacks: Pile[] = []

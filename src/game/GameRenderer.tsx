@@ -47,7 +47,7 @@ function computeAllDraggedCards(state: SolitaireState, card: PlayingCard) {
 
 function BannerPanel({ children }: { children?: ReactNode }) {
     return (
-        <div className="absolute inset-0 h-screen bg-gradient-to-r from-blue-600 to-purple-700">
+        <div className="absolute inset-0 h-screen bg-gradient-to-r from-blue-600 to-purple-700 animate-fade-in">
             <img src="https://picsum.photos/id/41/1280/805.jpg" alt="Background Image" className="absolute inset-0 w-full h-full object-cover opacity-30" />
             <div className="absolute inset-0 flex items-center justify-center">
                 <h1 className="text-white text-center text-5xl md:text-6xl lg:text-7xl font-bold tracking-wide">
@@ -180,6 +180,7 @@ export function GameRenderer() {
             case "won":
                 return <OverlayPanel>You won!</OverlayPanel>
             case "stopped":
+                //return <OverlayPanel>Solitaire</OverlayPanel>
                 return <BannerPanel>React Solitaire</BannerPanel>
             default:
                 return undefined

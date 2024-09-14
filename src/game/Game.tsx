@@ -254,8 +254,8 @@ export function Game({ children }: { children: ReactNode }) {
     }, [state])
     useEffect(() => {
         const externalstate = searchParams.get("s")
-        console.log("apply state: " + externalstate)
-        console.log(" curr state: " + stateToExternalForm(state))
+        //console.log("apply state: " + externalstate)
+        //console.log(" curr state: " + stateToExternalForm(state))
         if (externalstate && externalstate != stateToExternalForm(state)) {
             const r = urlsafe2data(externalstate)
             const raw = Pako.ungzip(r, { to: "string" })
