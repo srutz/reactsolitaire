@@ -10,8 +10,6 @@ export type Point = {
     y: number
 }
 
-
-
 export type CardRendererProps = { 
     card: PlayingCard 
     position?: Point
@@ -41,4 +39,3 @@ export function CardRenderer({ card, ...props }: CardRendererProps) {
         </div>
     )
 }
-

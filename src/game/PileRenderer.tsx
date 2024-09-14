@@ -28,12 +28,12 @@ function getPilePosition(pile: Pile) {
 }
 
 
-
 export type CardPileProps = {
     pile: Pile,
     clickHandler: (pile: Pile, card?: PlayingCard) => void
 }
 
+/* render a pile of cards */
 export function PileRenderer({ pile, clickHandler }: CardPileProps) {
     const rendererContext = useRendererContext()
     const gameContext = useGameContext()
@@ -64,7 +64,9 @@ export function PileRenderer({ pile, clickHandler }: CardPileProps) {
     }, [gameContext?.state.status])
 
     const computeDelay = useCallback((pile: Pile, cardIndex: number) => {
-        const delay = Math.floor(cardIndex * 250 / pile.cards.length)
+        const delay = ["stopped", "won", "launching"].indexOf(gameContext?.state.status || "") != -1 
+            ? Math.floor(cardIndex * 250 / pile.cards.length)
+            : undefined
         return delay
     }, [gameContext?.state.status])
 
@@ -82,7 +84,6 @@ export function PileRenderer({ pile, clickHandler }: CardPileProps) {
         } else {
             position.x = dragPosition?.x || 0
             position.y  = (dragPosition?.y || 0) + index * getStackingDistance(pile.type)
-            //s.zIndex = DRAG_LAYER
         }
         if (["stopped", "won"].indexOf(gameContext?.state.status || "") != -1 ) {
             position.x = -300
