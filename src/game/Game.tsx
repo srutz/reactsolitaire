@@ -87,6 +87,7 @@ export type GameAction =
     ;
 
 const gameReducer = (state: SolitaireState, action: GameAction) => {
+    //console.log("action: " + action.type)
     switch (action.type) {
         case "game-new": {
             const s = makeInitialState()
@@ -121,8 +122,8 @@ const gameReducer = (state: SolitaireState, action: GameAction) => {
                 s.stock.cards.splice(stockIndex, 1)
                 action.card.side = "front"
                 s.waste.cards.push(action.card)
-                checkForWin(s)
             }
+            checkForWin(s)
             return s
         }
         case "empty-stock": {
@@ -132,9 +133,9 @@ const gameReducer = (state: SolitaireState, action: GameAction) => {
                 s.stock.cards.reverse()
                 s.stock.cards.forEach(c => c.side = "back")
                 s.waste.cards = []
-                checkForWin(s)
                 s.stats.points -= 15
             }
+            checkForWin(s)
             return s
         }
         case "draw-waste": {
@@ -148,10 +149,10 @@ const gameReducer = (state: SolitaireState, action: GameAction) => {
                 if (moveAllowed) {
                     s.waste.cards.splice(wasteIndex, 1)
                     destinationStack.cards.push(action.card)
-                    checkForWin(s)
                     s.stats.points += 10
                 }
             }
+            checkForWin(s)
             return s
         }
         /* draw from a table, try to put "card" onto a stack if its the card's turn */
@@ -163,7 +164,6 @@ const gameReducer = (state: SolitaireState, action: GameAction) => {
                 if (tableIndex != -1 && tableIndex == table.cards.length - 1) {
                     if (action.side == "back" && action.card.side == "back") {
                         action.card.side = "front"
-                        checkForWin(s)
                         s.stats.points += 10
                     } else {
                         /* try to put on stack */
@@ -173,12 +173,12 @@ const gameReducer = (state: SolitaireState, action: GameAction) => {
                         if (moveAllowed) {
                             table.cards.splice(tableIndex, 1)
                             destinationStack.cards.push(action.card)
-                            checkForWin(s)
                             //s.stats.points += 10
                         }
                     }
                 }
             }
+            checkForWin(s)
             return s
         }
         /* dropping several "cards" onto a table */
@@ -197,10 +197,10 @@ const gameReducer = (state: SolitaireState, action: GameAction) => {
                         if (pile.type == "stack") {
                             s.stats.points -= 5
                         }
-                        checkForWin(s)
                     }
                 }
             }
+            checkForWin(s)
             return s
         }
         default:

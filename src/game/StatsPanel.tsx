@@ -27,9 +27,12 @@ export function StatsPanel() {
     const gameContext = useGameContext()
     const rerender = useRerender()
     useEffect(() => {
+        if (gameContext?.state?.status == "won") {
+            return
+        }            
         const interval = setInterval(rerender, 1000)
         return () => clearInterval(interval)
-    })
+    }, [gameContext?.state])
     if (!gameContext?.state) {
         return <div>Not initialized</div>
     }
