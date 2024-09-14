@@ -1,4 +1,4 @@
-import { act, createContext, Dispatch, ReactNode, useContext, useEffect, useReducer, useState } from "react"
+import { createContext, Dispatch, ReactNode, useContext, useEffect, useReducer, useState } from "react"
 import { Suit, Pile, PlayingCard, SolitaireState, makeInitialState, Rank, Side } from "./GameTypes"
 import { GameUtil } from "./CardUtil"
 import { Util } from "../components/Util"
