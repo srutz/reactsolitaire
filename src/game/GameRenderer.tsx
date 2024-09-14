@@ -18,11 +18,17 @@ export function getStackingDistance(pileType: PileType) {
     }
 }
 
+export type Size = {
+    width: number
+    height: number
+}
+
 export type RendererContextType = {
     draggedCard?: PlayingCard
     allDraggedCards: PlayingCard[]
     dragPosition?: { x: number, y: number }
     destinationPile?: Pile
+    availableSize: Size
 }
 
 function computeAllDraggedCards(state: SolitaireState, card: PlayingCard) {
@@ -43,6 +49,15 @@ function computeAllDraggedCards(state: SolitaireState, card: PlayingCard) {
     }
     return r
 }
+
+
+
+export const RendererContext = createContext<RendererContextType | null>(null)
+
+export function useRendererContext() {
+    return useContext(RendererContext)
+}
+
 
 
 function BannerPanel({ children }: { children?: ReactNode }) {
@@ -68,12 +83,6 @@ function OverlayPanel({ children }: { children?: ReactNode }) {
         </div>)
 }
 
-
-export const RendererContext = createContext<RendererContextType | null>(null)
-
-export function useRendererContext() {
-    return useContext(RendererContext)
-}
 
 export function GameRenderer() {
     /*const windowSize =*/ useWindowSize()
@@ -186,8 +195,9 @@ export function GameRenderer() {
                 return undefined
         }
     }
+    const availableSize = { width: elemRef.current?.clientWidth || 0, height: elemRef.current?.clientHeight || 0 }
     return (
-        <RendererContext.Provider value={{ draggedCard, dragPosition, destinationPile, allDraggedCards }}>
+        <RendererContext.Provider value={{ draggedCard, dragPosition, destinationPile, allDraggedCards, availableSize }}>
             <div ref={elemRef} className="h-1 grow shrink flex flex-col bg-gray-500 p-4 relative"
                 onMouseDown={mouseDown} onMouseMove={mouseMove} onMouseUp={endDrag} onMouseLeave={endDrag}>
                 <PileRenderer pile={gameContext.state.stock} clickHandler={clickHandler} />

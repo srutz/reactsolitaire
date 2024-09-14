@@ -1,7 +1,7 @@
 import { CSSProperties, useCallback } from "react"
 import { Pile, PlayingCard } from "./GameTypes"
 import { CardRenderer, Point } from "./CardRenderer"
-import { CARD_HEIGHT, CARD_WIDTH, getStackingDistance, useRendererContext } from "./GameRenderer"
+import { CARD_HEIGHT, CARD_WIDTH, getStackingDistance, Size, useRendererContext } from "./GameRenderer"
 import { GameUtil } from "./CardUtil"
 import { PileBackground } from "./PileBackground"
 import { PileOverlay } from "./PileOverlay"
@@ -12,10 +12,12 @@ const DRAG_LAYER = 1000
 
 
 /* gets the left-top anchor position for a pile */
-function getPilePosition(pile: Pile) {
-    const xdist = CARD_WIDTH + 16
+function getPilePosition(availableSize: Size, pile: Pile) {
+    const xspace = 16
+    const xdist = CARD_WIDTH + xspace
     const ydist = CARD_HEIGHT + 30 * getStackingDistance("stack")
-    const x0 = 24
+    //console.log("availableSize.width = " + availableSize.width)
+    const x0 = Math.floor((availableSize.width - (6 * xspace + 7 * CARD_WIDTH)) / 2)
     const y0 = 24
     const position: Point = { x: 0, y: 0 }
     switch (pile.type) {
@@ -40,10 +42,10 @@ export function PileRenderer({ pile, clickHandler }: CardPileProps) {
     if (!rendererContext) {
         return <div>no renderer context</div>
     }
-    const { draggedCard, dragPosition, allDraggedCards, destinationPile } = rendererContext
+    const { draggedCard, dragPosition, allDraggedCards, destinationPile, availableSize } = rendererContext
     //console.log("dragPosition.x = " + dragPosition?.x + ", dragPosition.y = " + dragPosition?.y + ", draggedCard = " + draggedCard)
     const dragStartPile = GameUtil.findPileForCard(gameContext?.state, draggedCard)
-    let { x, y } = getPilePosition(pile)
+    let { x, y } = getPilePosition(availableSize, pile)
     const style: CSSProperties = {
         top: y + "px",
         left: x + "px",
@@ -78,7 +80,7 @@ export function PileRenderer({ pile, clickHandler }: CardPileProps) {
 
     const computePosition = useCallback((pile: Pile, card: PlayingCard, cardIndex: number) => {
         const index = allDraggedCards.indexOf(card)
-        const position = getPilePosition(pile)
+        const position = getPilePosition(availableSize, pile)
         if (index == -1) {
             position.y = y + cardIndex * getStackingDistance(pile.type)
         } else {
@@ -90,7 +92,7 @@ export function PileRenderer({ pile, clickHandler }: CardPileProps) {
             position.y = -300
         }
         return position
-    }, [gameContext?.state.status, allDraggedCards, dragPosition, draggedCard])
+    }, [gameContext?.state.status, allDraggedCards, dragPosition, draggedCard, availableSize])
 
 
     return <>
