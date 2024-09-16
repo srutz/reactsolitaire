@@ -8,7 +8,7 @@ import { PileOverlay } from "./PileOverlay"
 import { useGameContext } from "./Game"
 
 
-const DRAG_LAYER = 1000
+export const DRAG_LAYER = 1000
 
 
 /* gets the left-top anchor position for a pile */
@@ -107,6 +107,7 @@ export function PileRenderer({ pile, clickHandler }: CardPileProps) {
                 key={i} /* GameUtil.cardId(c) */
                 data-card={GameUtil.cardId(card)} 
                 card={card}
+                dragged={allDraggedCards.indexOf(card) != -1}
                 width={geometry.cardWidth}
                 durationMs={computeDuration()}
                 delayMs={computeDelay(pile, i)}

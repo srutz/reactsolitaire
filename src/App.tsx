@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Menubar } from "./components/Menubar";
 import { ConfirmDialog, ModalDialog } from "./components/ModalDialog";
 import { Game, useGameContext } from "./game/Game";
@@ -31,6 +31,10 @@ export function Content() {
     const [stopGameConfirmShown, setStopGameConfirmShown] = useState(false)
     const context = useGameContext()
     const size = useWindowSize()
+    const [ angle, setAngle ] = useState(0)
+    useEffect(() => {
+        setAngle(aboutShown ? 12 : 0)
+    }, [aboutShown])
 
     const startNewGame = useCallback(() => {
         context?.dispatch({ type: "game-new" })
@@ -58,6 +62,9 @@ export function Content() {
         }
     }
 
+    const cards = [ "0H", "JS", "QD", "KH", "AS", "AD" ]
+
+
     return (
         <div className="h-1 grow shrink flex flex-col">
             <Menubar handleClick={handleMenubarAction} />
@@ -68,12 +75,20 @@ export function Content() {
             </div>
             <StatsPanel></StatsPanel>
             <ModalDialog show={aboutShown} onClose={() => { setAboutShown(false) }} title="About React Solitaire">
-                <p>Small Solitair Game in React. (For demo purposes only.)</p>
-                <p>by Stepan Rutz <a href="mailto:stepan.rutz@gmx.de">stepan.rutz AT gmx.de</a>.</p>
-                <div className="h-4"></div>
-                <p>Images are from <ExternalLink href="https://picsum.photos/"/></p>
-                <p>Card-Images are are from <ExternalLink href="https://deckofcardsapi.com/"/></p>
-                <p>Made with: Typescript, React, React-Router, Vite, Tailwind</p>
+                <div className="flex flex-col gap-2">
+                    <p>Small Solitair Game in React. (For demo purposes only.)</p>
+                    <p>by Stepan Rutz <a href="mailto:stepan.rutz@gmx.de">stepan.rutz AT gmx.de</a>.</p>
+                    <div className="h-4"></div>
+                    <p>Images are from <ExternalLink href="https://picsum.photos/"/></p>
+                    <p>Card-Images are are from <ExternalLink href="https://deckofcardsapi.com/"/></p>
+                    <p>Made with: Typescript, React, React-Router, Vite, Tailwind</p>
+                    <div className="flex flex-col bg-black p-4 self-strecth items-center relative min-h-64">
+                        {cards.map((card, index) => (
+                            <div className="w-32 absolute" style={{ transition: "all 5s ease-in-out", transformOrigin: "bottom center", transform: "rotate(" + (angle * (index - cards.length / 2)) + "deg)" }}>
+                                <img draggable="false" className="select-none " src={"cards/" + card + ".png"} />
+                            </div>))}
+                    </div>
+                </div>
             </ModalDialog>
             <ConfirmDialog 
                     show={newGameConfirmShown} 

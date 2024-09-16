@@ -56,3 +56,16 @@ a:hover {
     @apply bg-white hover:bg-gray-100 text-gray-500;
 }
 
+
+.xshadow-custom-large {
+    box-shadow: rgba(0, 0, 0, 0.26) 0px 22px 70px 4px;
+}
+
+@keyframes bounce {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.3);
+    }
+  }

@@ -1,6 +1,7 @@
-import { ComponentProps, CSSProperties } from "react"
+import { ComponentProps, CSSProperties, useEffect, useState } from "react"
 import { GameUtil } from "./CardUtil"
 import { PlayingCard } from "./GameTypes"
+import { DRAG_LAYER } from "./PileRenderer"
 
 
 
@@ -11,6 +12,7 @@ export type Point = {
 
 export type CardRendererProps = { 
     card: PlayingCard 
+    dragged?: boolean
     width: number
     position?: Point
     durationMs?: number
@@ -19,8 +21,10 @@ export type CardRendererProps = {
 } & ComponentProps<"div">
 
 
-export function CardRenderer({ card, width, ...props }: CardRendererProps) {
+export function CardRenderer({ card, dragged, width, ...props }: CardRendererProps) {
     const { position, durationMs = 0, delayMs = 0 } = props
+    const [releasingDrag, setReleasingDrag] = useState(false)
+
     const image = card.side == "back" ? "cards/back.png" : GameUtil.cardToImage(card)
     const style: CSSProperties = {
         width: width + "px",
@@ -31,10 +35,29 @@ export function CardRenderer({ card, width, ...props }: CardRendererProps) {
         top: position?.y !== undefined ? position.y + "px" : "auto",
         zIndex: props.zIndex || "auto"
     }
-    return (
-        <div data-card={GameUtil.cardId(card)} className="flex items-center cursor-pointer select-none absolute" style={style} onClick={props.onClick}>
-            <div className="bg-white border border-gray-600 shadow-lg rounded-lg flex justify-center items-center" >
-                <img draggable="false" className="select-none" src={image} alt={GameUtil.cardToString(card)} />
+    // if not dragged animate always
+    if (!dragged) {
+        style.transitionProperty = "all"
+        style.transitionDuration = "125ms"
+        style.transitionTimingFunction = "ease-out"
+    }
+    if (releasingDrag) {
+        style.zIndex = DRAG_LAYER
+        style.animation = "bounce 150ms ease-in-out"
+    }        
+    useEffect(() => {
+        console.log("change " + GameUtil.cardToString(card) + " " + dragged)
+        setTimeout(() => {
+            setReleasingDrag(false)
+        }, 150)
+        setReleasingDrag(true)
+    }, [dragged])
+    const clazzes = [ ..."flex items-center cursor-pointer select-none absolute".split(" ")
+        , dragged ? "xshadow-custom-large" : "" ]
+    return (        
+        <div data-card={GameUtil.cardId(card)} className={clazzes.join(" ")} style={style} onClick={props.onClick}>
+            <div className="bg-white border shadow-lg rounded-lg flex justify-center items-center" >
+                <img draggable="false" className="select-none " src={image} alt={GameUtil.cardToString(card)} />
             </div>
         </div>
     )
