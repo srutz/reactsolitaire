@@ -47,10 +47,12 @@ export function CardRenderer({ card, dragged, width, ...props }: CardRendererPro
     }        
     useEffect(() => {
         console.log("change " + GameUtil.cardToString(card) + " " + dragged)
-        setTimeout(() => {
-            setReleasingDrag(false)
-        }, 150)
-        setReleasingDrag(true)
+        if (!dragged) {
+            setTimeout(() => {
+                setReleasingDrag(false)
+            }, 150)
+            setReleasingDrag(true)
+        }
     }, [dragged])
     const clazzes = [ ..."flex items-center cursor-pointer select-none absolute".split(" ")
         , dragged ? "xshadow-custom-large" : "" ]
