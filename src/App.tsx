@@ -19,22 +19,9 @@ const router = createBrowserRouter([
         path: "/reactsolitaire",
         element: <Game><Content /></Game>,
     },
-    {   
-        path: "/reactsolitaire/test",
-        element: (
-            <div className="flex flex-col items-center">
-                <div>Hi</div>
-                <div className="bg-red-300">
-                    <img draggable="false" className="select-none " src="cards/6C.svg"/>
-                </div>
-                <div className="bg-green-300">
-                    <img draggable="false" className="select-none " src="cards/6C.png"/>
-                </div>
-            </div>
-        ),  
-    },
     { path: "*", element: <div>We haven't found where you were looking for</div> },
 ])
+
 
 export function App() {
     return <RouterProvider router={router} />
@@ -74,6 +61,8 @@ export function Content() {
             } else {
                 context?.dispatch({ type: "game-stop" })
             }
+        } else if ("share" == action) {
+            shareUrlWithWhatsapp()
         }
     }
 
@@ -128,3 +117,12 @@ export function Content() {
         </div>
     )
 }
+
+function shareUrlWithWhatsapp() {
+    const url = new URL(window.location.href)
+    url.searchParams.append("utm_source", "whatsapp")
+    const message = "Play React Solitaire with me: " + url.toString()
+    window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(message), "_blank")
+
+}
+
