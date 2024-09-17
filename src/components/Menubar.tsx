@@ -15,7 +15,7 @@ export function Menubar({handleClick} : { handleClick: (action: string) => void 
                 <a href="#" className="text-gray-300 hover:text-white" onClick={() => { handleClick("game-new")}}>New game</a>
                 <a href="#" className="text-gray-300 hover:text-white" onClick={() => { handleClick("game-stop")}}>Stop game</a>
                 <a href="#" className="text-gray-300 hover:text-white" onClick={() => { handleClick("about")}}>About</a>
-                <a href="#" className="text-gray-300 hover:text-white" onClick={() => { handleClick("share")}}><img alt="Share" src="/reactsolitaire/icons/share.svg" /></a>
+                <a href="#" className="text-gray-300 hover:text-white" onClick={() => { handleClick("share")}}><img alt="Share" src="/reactsolitaire/images/share.svg" /></a>
                 </nav>
             </div>
         </div>
