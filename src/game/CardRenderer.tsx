@@ -25,7 +25,6 @@ export type CardRendererProps = {
 export function CardRenderer({ card, dragged, width, ...props }: CardRendererProps) {
     const { position, durationMs = 0, delayMs = 0 } = props
     const [releasingDrag, setReleasingDrag] = useState(false)
-
     const image = card.side == "back" ? "cards/back.png" : GameUtil.cardToImage(card)
     const style: CSSProperties = {
         width: width + "px",

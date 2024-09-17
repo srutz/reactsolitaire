@@ -156,7 +156,7 @@ export function GameRenderer() {
             gameContext.dispatch({ type: "draw-waste", card: card })
         }
     }
-    const mouseDown = (e: React.MouseEvent) => {
+    const mouseDown = (e: React.MouseEvent | React.TouchEvent) => {
         if (!elemRef.current) {
             return
         }
@@ -191,19 +191,45 @@ export function GameRenderer() {
         setAllDraggedCards(dc)
         //console.log("allDraggedCards: " + dc.map(c => GameUtil.cardToString(c)).join(", "))
         const nativeEvent = e.nativeEvent
-        setDownPosition({ x: nativeEvent.offsetX, y: nativeEvent.offsetY })
+        let offsetX, offsetY
+        if (nativeEvent instanceof MouseEvent) {
+            offsetX = nativeEvent.offsetX
+            offsetY = nativeEvent.offsetY
+        } else  {
+            const touch = nativeEvent.touches[0]
+            offsetX = touch.clientX - target.getBoundingClientRect().left
+            offsetY = touch.clientY - target.getBoundingClientRect().top
+        }
+        setDownPosition({ x: offsetX, y: offsetY })
         const rect = container.getBoundingClientRect()
-        const x = nativeEvent.clientX - nativeEvent.offsetX - rect.left
-        const y = nativeEvent.clientY - nativeEvent.offsetY - rect.top
+        let clientX, clientY
+        if (nativeEvent instanceof MouseEvent) {
+            clientX = nativeEvent.clientX
+            clientY = nativeEvent.clientY
+        } else {
+            const touch = nativeEvent.touches[0]
+            clientX = touch.clientX
+            clientY = touch.clientY
+        }
+        const x = clientX - offsetX - rect.left
+        const y = clientY - offsetY - rect.top
         setDragPosition({ x, y })
     }
-    const mouseMove = (e: React.MouseEvent) => {
+    const mouseMove = (e: React.MouseEvent | React.TouchEvent) => {
         if (dragging && elemRef.current) {
             const container = elemRef.current
             const nativeEvent = e.nativeEvent
             const rect = container.getBoundingClientRect()
-            const x = nativeEvent.clientX - downPosition.x - rect.left
-            const y = nativeEvent.clientY - downPosition.y - rect.top
+            let x, y
+            if (nativeEvent instanceof MouseEvent) {
+                x = nativeEvent.clientX - downPosition.x - rect.left
+                y = nativeEvent.clientY - downPosition.y - rect.top
+            } else {
+                const touch = nativeEvent.touches[0]
+                x = touch.clientX - downPosition.x - rect.left
+                y = touch.clientY - downPosition.y - rect.top
+            }
+
             setDragPosition({ x, y })
             let destinationPile: Pile | undefined = undefined
             const target = GameUtil.findCardElement(e.target as HTMLElement)
@@ -236,7 +262,8 @@ export function GameRenderer() {
     return (
         <RendererContext.Provider value={{ draggedCard, dragPosition, destinationPile, allDraggedCards, geometry, availableSize }}>
             <div ref={elemRef} className="h-1 grow shrink flex flex-col bg-gray-500 p-4 relative"
-                onMouseDown={mouseDown} onMouseMove={mouseMove} onMouseUp={endDrag} onMouseLeave={endDrag}>
+                    onMouseDown={mouseDown} onMouseMove={mouseMove} onMouseUp={endDrag} onMouseLeave={endDrag} 
+                    onTouchStart={mouseDown} onTouchMove={mouseMove} onTouchEnd={endDrag} onTouchCancel={endDrag}>
                 <PileRenderer pile={gameContext.state.stock} clickHandler={clickHandler} />
                 <PileRenderer pile={gameContext.state.waste} clickHandler={clickHandler} />
                 {gameContext.state.stacks.map((pile, i) => <PileRenderer key={"stack" + i} pile={pile} clickHandler={clickHandler} />)}
