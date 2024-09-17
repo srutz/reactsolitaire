@@ -46,7 +46,7 @@ export function CardRenderer({ card, dragged, width, ...props }: CardRendererPro
         style.animation = "bounce 150ms ease-in-out"
     }        
     useEffect(() => {
-        console.log("change " + GameUtil.cardToString(card) + " " + dragged)
+        //console.log("change " + GameUtil.cardToString(card) + " " + dragged)
         if (!dragged) {
             setTimeout(() => {
                 setReleasingDrag(false)

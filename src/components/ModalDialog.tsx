@@ -1,4 +1,5 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { useHotkeys } from "../hooks/Hotkeys";
 
 
 function ModalBackdrop({ opening, children }: { opening?: boolean; children?: React.ReactNode }) {
@@ -40,6 +41,14 @@ export function ModalDialog({ show, title, onClose, children }: {
     onClose: () => void
     children: React.ReactNode
 }) {
+    const key = useHotkeys([
+        { id: "close", key: "Escape" }
+    ])
+    useEffect(() => {
+        if (key == "close") {
+            onClose()
+        }
+    }, [key])
     const [closing, setClosing] = useState(false)
     if (!show) {
         return null

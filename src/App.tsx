@@ -84,7 +84,7 @@ export function Content() {
                     <p>Made with: Typescript, React, React-Router, Vite, Tailwind</p>
                     <div className="flex flex-col bg-black p-4 self-strecth items-center relative min-h-64">
                         {cards.map((card, index) => (
-                            <div className="w-32 absolute" style={{ transition: "all 5s ease-in-out", transformOrigin: "bottom center", transform: "rotate(" + (angle * (index - cards.length / 2)) + "deg)" }}>
+                            <div key={index} className="w-32 absolute" style={{ transition: "all 5s ease-in-out", transformOrigin: "bottom center", transform: "rotate(" + (angle * (index - cards.length / 2)) + "deg)" }}>
                                 <img draggable="false" className="select-none " src={"cards/" + card + ".png"} />
                             </div>))}
                     </div>

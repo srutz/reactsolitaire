@@ -4,6 +4,7 @@ import { useWindowSize } from "../hooks/WindowSize"
 import { PileRenderer } from "./PileRenderer"
 import { GameUtil } from "./CardUtil"
 import { Pile, PileType, PlayingCard, SolitaireState } from "./GameTypes"
+import { StampedBanner } from "../components/StampedBanner"
 
 /*
 const SIZE_SCALE = 1.25
@@ -95,7 +96,7 @@ function BannerPanel({ children }: { children?: ReactNode }) {
 
 function OverlayPanel({ children }: { children?: ReactNode }) {
     return (
-        <div className="absolute inset-0 h-screen bg-black bg-opacity-30">
+        <div className="absolute inset-0 h-screen bg-black bg-opacity-60">
             <div className="absolute inset-0 flex items-center justify-center">
                 <h1 className="text-white text-center text-5xl md:text-6xl lg:text-7xl font-bold tracking-wide">
                     {children}
@@ -215,7 +216,11 @@ export function GameRenderer() {
     const getBanner = () => {
         switch (gameContext.state.status) {
             case "won":
-                return <OverlayPanel>You won!</OverlayPanel>
+                return (
+                    <OverlayPanel>
+                        <StampedBanner text="You won"></StampedBanner>
+                    </OverlayPanel>
+                )
             case "stopped":
                 //return <OverlayPanel>Solitaire</OverlayPanel>
                 return <BannerPanel>React Solitaire</BannerPanel>
