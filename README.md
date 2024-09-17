@@ -1,6 +1,11 @@
 
 # Solitaire
 
+# Preview
+
+![preview](https://raw.githubusercontent.com/srutz/reactsolitaire/main/public/solitaire.gif)
+
+
 # Tech used:
 
 React + TypeScript + Vite + Tailwind + React Router
