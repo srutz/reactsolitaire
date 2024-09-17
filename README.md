@@ -5,6 +5,9 @@
 
 ![preview](https://raw.githubusercontent.com/srutz/reactsolitaire/main/public/solitaire.gif)
 
+# Live Game-Link
+
+https://srutz.github.io/reactsolitaire/
 
 # Tech used:
 
@@ -14,10 +17,6 @@ React + TypeScript + Vite + Tailwind + React Router
 
 stepan.rutz AT gmx.de
 
-
-# Live Game-Link
-
-https://srutz.github.io/reactsolitaire/
 
 # License
 
