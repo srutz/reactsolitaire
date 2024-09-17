@@ -23,6 +23,7 @@ html {
     font-feature-settings: normal;
     font-variation-settings: normal;    
     color: light-dark(rgb(102, 102, 102), #f7f7f7);
+    overscroll-behavior: none;
 }
 
 body {
@@ -31,6 +32,7 @@ body {
     flex-direction: column;
     font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
     font-weight: 500;
+    overscroll-behavior: none;
 }
 
 #root {
