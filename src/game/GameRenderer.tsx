@@ -87,9 +87,6 @@ function BannerPanel({ children }: { children?: ReactNode }) {
     return (
         <div className="absolute inset-0 h-screen bg-gradient-to-r from-gray-500 to-gray-800 animate-fade-in">
             <AnimatedHand ></AnimatedHand>
-            { false &&
-            <img src="images/805.jpg" alt="Background Image" className="absolute inset-0 w-full h-full object-cover opacity-30" />
-            }
             <div className="absolute inset-0 flex items-center justify-center">
                 <h1 className="text-white text-center text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter uppercase">
                     {children}
