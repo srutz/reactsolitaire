@@ -79,6 +79,7 @@ export function Content() {
                 <div className="flex flex-col gap-2">
                     <p>Small Solitair Game in React. (For demo purposes only.)</p>
                     <p>by Stepan Rutz <a href="mailto:stepan.rutz@gmx.de">stepan.rutz AT gmx.de</a>.</p>
+                    <p>Projectpage incl. sourcecode <ExternalLink href="https://github.com/srutz/reactsolitaire/" />.</p>
                     <div className="h-4"></div>
                     <p>Images are from <ExternalLink href="https://picsum.photos/"/></p>
                     <p>Card-Images are are from <ExternalLink href="https://deckofcardsapi.com/"/></p>
