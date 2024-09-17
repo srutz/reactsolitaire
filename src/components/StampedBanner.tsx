@@ -31,15 +31,14 @@ export function StampedBanner({ text }: { text: string }) {
         <div ref={elemRef} className="h-64 bg-black self-stretch relative">
             {text.split("").map((c, i) => <Stamp text={c} key={i} 
                 position={computePosition(i)} 
-                angle={(i * 217) % 360}
                 keyframes={"pulse" + (i % 4)}
                 delayMs={i * 50}/>)}
         </div>
     )
 }
 
-function Stamp({ text, position, delayMs = 0, angle = 0, keyframes}
-: { text: string, position: Point, delayMs?: number, angle?: number, keyframes: string }) {
+function Stamp({ text, position, delayMs = 0, keyframes}
+: { text: string, position: Point, delayMs?: number, keyframes: string }) {
     if (!text.trim()) {
         return undefined
     }
@@ -64,7 +63,6 @@ function Stamp({ text, position, delayMs = 0, angle = 0, keyframes}
     return (
         <div className="stamped text-6xl font-bold flex flex-col justify-center items-center text-white"
                 style={{ 
-                    transform: `rotate(${angle}deg)`,
                     animationDelay: delayMs + "ms",
                     left: position.x + "px", 
                     top: position.y + "px" ,
