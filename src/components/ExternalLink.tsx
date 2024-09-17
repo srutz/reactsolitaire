@@ -1,3 +1,4 @@
+/* (c) Stepan Rutz 2024. All rights reserved. License under the WTFPL */
 import { ReactNode } from "react"
 
 export function ExternalLink({ href, children }: { href: string, children?: ReactNode }) {

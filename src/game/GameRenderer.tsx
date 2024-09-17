@@ -1,3 +1,4 @@
+/* (c) Stepan Rutz 2024. All rights reserved. License under the WTFPL */
 import { createContext, ReactNode, useCallback, useContext, useRef, useState } from "react"
 import { useGameContext } from "./Game"
 import { useWindowSize } from "../hooks/WindowSize"

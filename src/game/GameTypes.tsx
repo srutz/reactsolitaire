@@ -1,3 +1,4 @@
+/* (c) Stepan Rutz 2024. All rights reserved. License under the WTFPL */
 import { Util } from "../components/Util"
 
 /* define a playing card in terms of suit and rank */

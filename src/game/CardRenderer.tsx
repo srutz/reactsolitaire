@@ -1,3 +1,4 @@
+/* (c) Stepan Rutz 2024. All rights reserved. License under the WTFPL */
 import { ComponentProps, CSSProperties, useEffect, useState } from "react"
 import { GameUtil } from "./CardUtil"
 import { PlayingCard } from "./GameTypes"

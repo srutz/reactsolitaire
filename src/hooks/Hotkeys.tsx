@@ -1,3 +1,4 @@
+/* (c) Stepan Rutz 2024. All rights reserved. License under the WTFPL */
 
 /* Written by Stepan Rutz */
 import { useEffect, useState } from 'react'

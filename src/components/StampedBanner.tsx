@@ -1,3 +1,4 @@
+/* (c) Stepan Rutz 2024. All rights reserved. License under the WTFPL */
 
 import { useEffect, useRef, useState } from "react"
 import { Point } from "../game/CardRenderer"

@@ -1,3 +1,4 @@
+/* (c) Stepan Rutz 2024. All rights reserved. License under the WTFPL */
 import { useEffect, useState } from "react"
 
 type WindowSize = { width: number, height: number }

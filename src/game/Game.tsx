@@ -1,3 +1,4 @@
+/* (c) Stepan Rutz 2024. All rights reserved. License under the WTFPL */
 import { createContext, Dispatch, ReactNode, useContext, useEffect, useReducer, useState } from "react"
 import { Suit, Pile, PlayingCard, SolitaireState, makeInitialState, Rank, Side } from "./GameTypes"
 import { GameUtil } from "./CardUtil"

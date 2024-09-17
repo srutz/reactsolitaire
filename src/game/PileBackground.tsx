@@ -1,3 +1,4 @@
+/* (c) Stepan Rutz 2024. All rights reserved. License under the WTFPL */
 import { ComponentProps } from "react";
 import { Pile } from "./GameTypes"
 import { GameUtil } from "./CardUtil"

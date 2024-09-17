@@ -1,3 +1,4 @@
+/* (c) Stepan Rutz 2024. All rights reserved. License under the WTFPL */
 import { CSSProperties, useCallback } from "react"
 import { Pile, PlayingCard } from "./GameTypes"
 import { CardRenderer, Point } from "./CardRenderer"

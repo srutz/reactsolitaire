@@ -9,9 +9,14 @@ React + TypeScript + Vite + Tailwind + React Router
 
 stepan.rutz AT gmx.de
 
-# Github Pages Deployment
+
+# Live Game-Link
 
 https://srutz.github.io/reactsolitaire/
+
+# License
+
+Its the WTFPL license. Do what you want with it, but check the LICENSE file for details.
 
 # Some game states
 

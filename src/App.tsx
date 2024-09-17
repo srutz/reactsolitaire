@@ -1,3 +1,4 @@
+/* (c) Stepan Rutz 2024. All rights reserved. License under the WTFPL */
 import { useCallback, useEffect, useState } from "react";
 import { Menubar } from "./components/Menubar";
 import { ConfirmDialog, ModalDialog } from "./components/ModalDialog";
