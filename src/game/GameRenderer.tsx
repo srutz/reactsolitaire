@@ -6,6 +6,7 @@ import { PileRenderer } from "./PileRenderer"
 import { GameUtil } from "./CardUtil"
 import { Pile, PileType, PlayingCard, SolitaireState } from "./GameTypes"
 import { StampedBanner } from "../components/StampedBanner"
+import { AnimatedHand } from "./AnimatedHand"
 
 /*
 const SIZE_SCALE = 1.25
@@ -82,13 +83,15 @@ export function useRendererContext() {
 }
 
 
-
 function BannerPanel({ children }: { children?: ReactNode }) {
     return (
-        <div className="absolute inset-0 h-screen bg-gradient-to-r from-indigo-600 to-orange-800 animate-fade-in">
+        <div className="absolute inset-0 h-screen bg-gradient-to-r from-gray-500 to-gray-800 animate-fade-in">
+            <AnimatedHand ></AnimatedHand>
+            { false &&
             <img src="images/805.jpg" alt="Background Image" className="absolute inset-0 w-full h-full object-cover opacity-30" />
+            }
             <div className="absolute inset-0 flex items-center justify-center">
-                <h1 className="text-white text-center text-5xl md:text-6xl lg:text-7xl font-bold tracking-wide">
+                <h1 className="text-white text-center text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter uppercase">
                     {children}
                 </h1>
             </div>
@@ -224,7 +227,7 @@ export function GameRenderer() {
                 )
             case "stopped":
                 //return <OverlayPanel>Solitaire</OverlayPanel>
-                return <BannerPanel>React Solitaire</BannerPanel>
+                return <BannerPanel><span className="text-green-300">React</span> Solitaire</BannerPanel>
             default:
                 return undefined
         }

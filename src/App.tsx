@@ -77,11 +77,10 @@ export function Content() {
             <StatsPanel></StatsPanel>
             <ModalDialog show={aboutShown} onClose={() => { setAboutShown(false) }} title="About React Solitaire">
                 <div className="flex flex-col gap-2">
-                    <p>Small Solitair Game in React. (For demo purposes only.)</p>
+                    <p>Small Solitair Game in React. Cards are just divs, no Canvas used.</p>
                     <p>by Stepan Rutz <a href="mailto:stepan.rutz@gmx.de">stepan.rutz AT gmx.de</a>.</p>
                     <p>Projectpage incl. sourcecode <ExternalLink href="https://github.com/srutz/reactsolitaire/" />.</p>
                     <div className="h-4"></div>
-                    <p>Images are from <ExternalLink href="https://picsum.photos/"/></p>
                     <p>Card-Images are are from <ExternalLink href="https://deckofcardsapi.com/"/></p>
                     <p>Made with: Typescript, React, React-Router, Vite, Tailwind</p>
                     <div className="flex flex-col bg-black p-4 self-strecth items-center relative min-h-64">

@@ -1,0 +1,41 @@
+
+@keyframes card0 {
+    0% { transform: rotate(0deg); }
+    30%, 70% { transform: rotate(-20deg); }
+    90%, 10% { transform: rotate(0deg); }
+}
+
+@keyframes card1 {
+    0% { transform: rotate(0deg); }
+    30%, 70% { transform: rotate(-12deg); }
+    90%, 10% { transform: rotate(0deg); }
+}
+
+@keyframes card2 {
+    0% { transform: rotate(0deg); }
+    30%, 70% { transform: rotate(-4deg); }
+    90%, 10% { transform: rotate(0deg); }
+}
+
+@keyframes card3 {
+    0% { transform: rotate(0deg); }
+    30%, 70% { transform: rotate(4deg); }
+    90%, 10% { transform: rotate(0deg); }
+}
+
+@keyframes card4 {
+    0% { transform: rotate(0deg); }
+    30%, 70% { transform: rotate(12deg); }
+    90%, 10% { transform: rotate(0deg); }
+}
+
+@keyframes card5 {
+    0% { transform: rotate(0deg); }
+    30%, 70% { transform: rotate(20deg); }
+    90%, 10% { transform: rotate(0deg); }
+}
+
+
+.animatedhand-card {
+    transform-origin: center 90%;
+}

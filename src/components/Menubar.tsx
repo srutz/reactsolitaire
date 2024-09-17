@@ -9,7 +9,7 @@ export function Menubar({handleClick} : { handleClick: (action: string) => void 
     return (
         <div className="bg-gray-800 p-4 flex flex-col">
             <div className="flex items-center">
-                <div className="text-white text-lg font-bold select-none">React Solitaire</div>
+                <div className="text-white text-3xl font-bold select-none uppercase tracking-tighter"><span className="text-green-400">React</span> Solitaire</div>
                 <div className="grow"></div>
                 <nav className="flex gap-4">
                 <a href="#" className="text-gray-300 hover:text-white" onClick={() => { handleClick("game-new")}}>New game</a>
