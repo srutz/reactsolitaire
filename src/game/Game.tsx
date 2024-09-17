@@ -1,5 +1,5 @@
 /* (c) Stepan Rutz 2024. All rights reserved. License under the WTFPL */
-import { createContext, Dispatch, ReactNode, useContext, useEffect, useReducer, useState } from "react"
+import { createContext, Dispatch, ReactNode, useContext, useEffect, useReducer, useRef, useState } from "react"
 import { Suit, Pile, PlayingCard, SolitaireState, makeInitialState, Rank, Side } from "./GameTypes"
 import { GameUtil } from "./CardUtil"
 import { Util } from "../components/Util"
@@ -57,7 +57,7 @@ function tableMoveAllowed(table: Pile, card: PlayingCard) {
     return false
 }
 
-function checkForWin(s: SolitaireState) {
+function checkForWin(s: SolitaireState, countMove: boolean) {
     let completeStacks = 0
     const deckSize = s.stock.cards.length + s.waste.cards.length
         + s.tables.reduce((acc, p) => acc + p.cards.length, 0)
@@ -70,7 +70,9 @@ function checkForWin(s: SolitaireState) {
     if (completeStacks == 4) {
         s.status = "won"
     }
-    s.stats.moves++
+    if (countMove) {
+        s.stats.moves++
+    }
 }
 
 export type FragementState = Pick<SolitaireState, "stats" | "stock" | "waste" | "stacks" | "tables">
@@ -119,12 +121,14 @@ const gameReducer = (state: SolitaireState, action: GameAction) => {
         case "draw-stock": {
             const s = { ...state }
             const stockIndex = s.stock.cards.findIndex(c => c == action.card)
+            let moveAllowed = false
             if (stockIndex != -1 && stockIndex == s.stock.cards.length - 1) {
                 s.stock.cards.splice(stockIndex, 1)
                 action.card.side = "front"
                 s.waste.cards.push(action.card)
+                moveAllowed = true
             }
-            checkForWin(s)
+            checkForWin(s, moveAllowed)
             return s
         }
         case "empty-stock": {
@@ -136,41 +140,44 @@ const gameReducer = (state: SolitaireState, action: GameAction) => {
                 s.waste.cards = []
                 s.stats.points -= 15
             }
-            checkForWin(s)
+            checkForWin(s, true)
             return s
         }
         case "draw-waste": {
             const s = { ...state }
             const wasteIndex = s.waste.cards.findIndex(c => c == action.card)
+            let moveAllowed = false
             if (wasteIndex != -1 && wasteIndex == s.waste.cards.length - 1) {
                 /* try to put on stack */
                 const destinationStackIndex = suitToIndex(action.card.suit)
                 const destinationStack = s.stacks[destinationStackIndex]
-                let moveAllowed = stackMoveAllowed(destinationStack, action.card)
+                moveAllowed = stackMoveAllowed(destinationStack, action.card)
                 if (moveAllowed) {
                     s.waste.cards.splice(wasteIndex, 1)
                     destinationStack.cards.push(action.card)
                     s.stats.points += 10
                 }
             }
-            checkForWin(s)
+            checkForWin(s, moveAllowed)
             return s
         }
         /* draw from a table, try to put "card" onto a stack if its the card's turn */
         case "draw-table": {
             const s = { ...state }
             const table = GameUtil.findPileForCard(s, action.card)
+            let moveAllowed = false
             if (table) {
                 const tableIndex = table.cards.findIndex(c => c == action.card)
                 if (tableIndex != -1 && tableIndex == table.cards.length - 1) {
                     if (action.side == "back" && action.card.side == "back") {
                         action.card.side = "front"
                         s.stats.points += 10
+                        moveAllowed = true
                     } else {
                         /* try to put on stack */
                         const destinationStackIndex = suitToIndex(action.card.suit)
                         const destinationStack = s.stacks[destinationStackIndex]
-                        const moveAllowed = stackMoveAllowed(destinationStack, action.card)
+                        moveAllowed = stackMoveAllowed(destinationStack, action.card)
                         if (moveAllowed) {
                             table.cards.splice(tableIndex, 1)
                             destinationStack.cards.push(action.card)
@@ -179,7 +186,7 @@ const gameReducer = (state: SolitaireState, action: GameAction) => {
                     }
                 }
             }
-            checkForWin(s)
+            checkForWin(s, moveAllowed)
             return s
         }
         /* dropping several "cards" onto a table */
@@ -188,8 +195,9 @@ const gameReducer = (state: SolitaireState, action: GameAction) => {
             const s = { ...state }
             const card = action.cards[0]
             const pile = GameUtil.findPileForCard(s, card)
+            let moveAllowed = false
             if (pile && pile != action.table && action.cards.length > 0) {
-                const moveAllowed = tableMoveAllowed(action.table, action.cards[0])
+                moveAllowed = tableMoveAllowed(action.table, action.cards[0])
                 if (moveAllowed) {
                     for (let i = 0; i < action.cards.length; i++) {
                         const curr = action.cards[i]
@@ -201,7 +209,7 @@ const gameReducer = (state: SolitaireState, action: GameAction) => {
                     }
                 }
             }
-            checkForWin(s)
+            checkForWin(s, moveAllowed)
             return s
         }
         default:
@@ -259,17 +267,45 @@ export function Game({ children }: { children: ReactNode }) {
     const [ searchParams, setSearchParams ] = useSearchParams()
     const [state, dispatch] = useReducer(gameReducer, initialState)
     const [restoringState, setRestoringState] = useState(false)
+    const previousState = useRef("")       // previous state as a url-safe string
+
+    /* the idea is to keep the game's state in sync with the URL 
+     * so that you can bookmark the game and restore it later
+     * or share the game with others. Also you can use the history
+     * back and forward functionality of the browser to undo and redo
+     * moves.
+     * 
+     * The state is stored in the URL as a compressed JSON string.
+     */
     useEffect(() => {
         /* do nothing if currently restoring state */
         if (restoringState) {
             return
         }
         if (state.status === "running") {
-            setSearchParams({ s: stateToExternalForm(state) })
+            /* here we could optimize the user experience by only updating the URL
+             * if the state has changed "enough"
+             * we can compare to the previous state and only update the URL if
+             * the difference is big enough.
+             */
+            const externalForm = stateToExternalForm(state)
+            const stateEquals = externalForm == previousState.current 
+            // uncomment to track state changes in the console
+            //if (previousState.current) console.log("old state: ", JSON.parse(Pako.ungzip(urlsafe2data(previousState.current), { to: "string" }))) }
+            //console.log("new state: ", JSON.parse(Pako.ungzip(urlsafe2data(externalForm), { to: "string" })))
+            if (!stateEquals) {
+                setSearchParams({ s: externalForm })
+            }
+            previousState.current = externalForm
         } else {
             setSearchParams({ })
         }
-    }, [state])
+    }, [state])  /* careful here, we don't want to update the state without reason */
+
+    /* this effect is for applying the state. the user just navigates to a link
+     * and the state is restored from the URL by this effect
+     * this should happen only when the searchParams change and not when the state changes
+     */
     useEffect(() => {
         const externalstate = searchParams.get("s")
         if (externalstate && externalstate != stateToExternalForm(state)) {
@@ -282,7 +318,7 @@ export function Game({ children }: { children: ReactNode }) {
                 setRestoringState(false)
             }, 1)
         }
-    }, [searchParams])
+    }, [searchParams]) /* careful here, this effect watches the searchParams */
     return (
         <GameContext.Provider value={{ state, dispatch }}>
             {children}
