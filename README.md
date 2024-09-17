@@ -39,3 +39,22 @@ https://srutz.github.io/reactsolitaire/?s=H4sIAAAAAAAAA5WWyW6DMBCG38VnKrGTcMu1OV
 https://srutz.github.io/reactsolitaire/?s=H4sIAAAAAAAAA5XWT0-DMBjH8ffSMyZrGWxy86onE2-GQwcYyTZYaOefEN67ZZqIz9P98nijy4d2yb7tOirn-2qvilH5z1Ojip9xotqubj5UcaMTVdmhdqp4LqdEvVvnmwX_Hl_lzttqPw8W89vl_KtfPyp3bn0g1eG8c4EMtgvfTN2FR9fW88svQ995NSXXqJHTVE7XcprJaS6nGzndyumtnOqV3N7L6aOcPjBazjgelY5E5U62boRVUYuyohZ1RS0Ki1pUFrUoLWpRW9SiuKhFdVEL86IY9UUtDwxUYyLVvDZ28MJqqEXVUIuqoRZVQy2qhlpUDbWoGmpRNdSiaqiF1VCMqqEWHUvU_utcSiOF1a099l0tbIxrVBnXqDOuUWlco9a4RrVxjXrjGhXHNWqOa1gd56g7rmPnVZkob3eH5s8t6vJJ9Ba1zI8oLVJGpFKRWgv-iPEOIhNmomVz0T6LLVxerqxhg4cb7qlvu_nJbMKqx_5t_gX0Vl_E4J_aY3hTb0yeZalJ08yYafoCXBSbrk8LAAA
 
 
+
+# The SVG Files
+
+The svg File were manipulated like this
+
+```bash
+for i in *.svg; do inkscape $i --actions="select-all; page-fit-to-selection;  export-do; file-close"; done
+ls -1 *_out.svg | while read i; do n=${i/_out/}; mv $i $n; done
+```
+
+Beforehand the files were downloaded like this:
+
+```bash
+cat cards.json > jq '.cards[].image' |sort | sed -e 's/.png$/.svg/' | while read a; do echo wget $a; sleep 1; done 
+```
+
+Cards.json was obtained from https://deckofcardsapi.com.
+
+

@@ -19,6 +19,20 @@ const router = createBrowserRouter([
         path: "/reactsolitaire",
         element: <Game><Content /></Game>,
     },
+    {   
+        path: "/reactsolitaire/test",
+        element: (
+            <div className="flex flex-col items-center">
+                <div>Hi</div>
+                <div className="bg-red-300">
+                    <img draggable="false" className="select-none " src="cards/6C.svg"/>
+                </div>
+                <div className="bg-green-300">
+                    <img draggable="false" className="select-none " src="cards/6C.png"/>
+                </div>
+            </div>
+        ),  
+    },
     { path: "*", element: <div>We haven't found where you were looking for</div> },
 ])
 

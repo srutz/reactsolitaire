@@ -32,7 +32,7 @@ export function AnimatedHand() {
                     animationIterationCount: "infinite",
                     top: "calc(50% - 64px)",
                 }}>
-                <img draggable="false" className="select-none" src={"cards/" + card + ".png"} />
+                <img draggable="false" className="select-none" src={"cards/" + card + ".svg"} />
             </div>))}
         </div>
     )
