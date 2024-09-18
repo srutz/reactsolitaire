@@ -75,6 +75,8 @@ export function Content() {
             <div className="relative bg-indigo-800 h-1 grow shrink flex flex-col overflow-hidden">
                 {size.width < 820
                     ? <div className="flex grow items-center justify-center text-center text-7xl font-bold p-4 text-white">Please use a wider browser window</div>
+                    : size.height < 600
+                    ? <div className="flex grow items-center justify-center text-center text-7xl font-bold p-4 text-white">Please use a taller browser window</div>
                     :<GameRenderer></GameRenderer>}
             </div>
             <StatsPanel></StatsPanel>
