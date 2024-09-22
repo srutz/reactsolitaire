@@ -173,7 +173,7 @@ const gameReducer = (state: SolitaireState, action: GameAction) => {
                         action.card.side = "front"
                         s.stats.points += 10
                         moveAllowed = true
-                    } else {
+                    } else if (action.side == "front") {
                         /* try to put on stack */
                         const destinationStackIndex = suitToIndex(action.card.suit)
                         const destinationStack = s.stacks[destinationStackIndex]

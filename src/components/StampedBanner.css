@@ -2,8 +2,6 @@
 
 .stamped {
     position: absolute;
-    height: 96px;
-    width: 96px;
     left: 200px;
     top: 20px;
     border-radius: 5px;

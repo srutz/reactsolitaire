@@ -34,7 +34,7 @@ export function makeGeometry(scale: number) {
 
 export function getStackingDistance(scale: number, pileType: PileType) {
     switch (pileType) {
-        case "table": return Math.floor(scale * 20) 
+        case "table": return Math.floor(scale * 22) 
         case "stack": return Math.floor(scale * 4)
         case "stock": return Math.floor(scale * 3)
         case "waste": return Math.floor(scale * 3)
@@ -53,6 +53,7 @@ export type RendererContextType = {
     destinationPile?: Pile
     geometry: Geometry
     availableSize: Size
+    cheat?: boolean
 }
 
 function computeAllDraggedCards(state: SolitaireState, card: PlayingCard) {
@@ -95,19 +96,26 @@ function BannerPanel({ children }: { children?: ReactNode }) {
         </div>)
 }
 
-function OverlayPanel({ children }: { children?: ReactNode }) {
+function LargeTitle({ children }: { children?: ReactNode }) {
+    return (<h1 className="text-white text-center text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter uppercase">
+        {children}
+    </h1>)
+}
+
+function OverlayPanel({ title, children }: { title?: string, children?: ReactNode }) {
     return (
         <div className="absolute inset-0 h-screen bg-black bg-opacity-60">
-            <div className="absolute inset-0 flex items-center justify-center">
-                <h1 className="text-white text-center text-5xl md:text-6xl lg:text-7xl font-bold tracking-wide">
+            <div className="absolute inset-0 flex items-stretch justify-center flex flex-col">
+                <LargeTitle>{title}</LargeTitle>
+                <div className="h-1 grow flex flex-col">
                     {children}
-                </h1>
+                </div>
             </div>
         </div>)
 }
 
 
-export function GameRenderer() {
+export function GameRenderer({ cheat }: { cheat?: boolean }) {
     const windowSize = useWindowSize()
     const gameContext = useGameContext()
     const elemRef = useRef<HTMLDivElement>(null)
@@ -131,9 +139,9 @@ export function GameRenderer() {
     }, [draggedCard, destinationPile, gameContext, gameContext])
 
     let scale = 1
-    if (windowSize.width >= 1200 && windowSize.height >= 900) {
+    if (windowSize.width >= 1200 && windowSize.height >= 940) {
         scale = 1.5
-    } else if (windowSize.width >= 1080 && windowSize.height >= 750) {
+    } else if (windowSize.width >= 1080 && windowSize.height >= 780) {
         scale = 1.25
     }
     const geometry = makeGeometry(scale)
@@ -249,7 +257,7 @@ export function GameRenderer() {
                     </OverlayPanel>
                 )
             case "stopped":
-                //return <OverlayPanel>Solitaire</OverlayPanel>
+                //return <OverlayPanel title="Solitaire"></OverlayPanel>
                 return <BannerPanel><span className="text-green-300">React</span> Solitaire</BannerPanel>
             default:
                 return undefined
@@ -257,14 +265,22 @@ export function GameRenderer() {
     }
     const availableSize = { width: elemRef.current?.clientWidth || 0, height: elemRef.current?.clientHeight || 0 }
     return (
-        <RendererContext.Provider value={{ draggedCard, dragPosition, destinationPile, allDraggedCards, geometry, availableSize }}>
-            <div ref={elemRef} className="h-1 grow shrink flex flex-col bg-gray-500 p-4 relative"
-                    onMouseDown={mouseDown} onMouseMove={mouseMove} onMouseUp={endDrag} onMouseLeave={endDrag} 
-                    onTouchStart={mouseDown} onTouchMove={mouseMove} onTouchEnd={endDrag} onTouchCancel={endDrag}>
-                <PileRenderer pile={gameContext.state.stock} clickHandler={clickHandler} />
-                <PileRenderer pile={gameContext.state.waste} clickHandler={clickHandler} />
-                {gameContext.state.stacks.map((pile, i) => <PileRenderer key={"stack" + i} pile={pile} clickHandler={clickHandler} />)}
-                {gameContext.state.tables.map((pile, i) => <PileRenderer key={"table" + i} pile={pile} clickHandler={clickHandler} />)}
+        <RendererContext.Provider value={{ draggedCard, dragPosition, destinationPile, allDraggedCards, geometry, availableSize, cheat }}>
+            <div className="h-1 grow shrink flex flex-col bg-gray-500 p-4 relative">
+                <div ref={elemRef} className="h-1 grow shrink flex flex-col bg-gray-500 p-4 relative"
+                        onMouseDown={mouseDown} onMouseMove={mouseMove} onMouseUp={endDrag} onMouseLeave={endDrag} 
+                        onTouchStart={mouseDown} onTouchMove={mouseMove} onTouchEnd={endDrag} onTouchCancel={endDrag}>
+                    <PileRenderer pile={gameContext.state.stock} clickHandler={clickHandler} />
+                    <PileRenderer pile={gameContext.state.waste} clickHandler={clickHandler} />
+                    {gameContext.state.stacks.map((pile, i) => <PileRenderer key={"stack" + i} pile={pile} clickHandler={clickHandler} />)}
+                    {gameContext.state.tables.map((pile, i) => <PileRenderer key={"table" + i} pile={pile} clickHandler={clickHandler} />)}
+                </div>
+                {cheat && (
+                    <OverlayPanel title="Cheatmode">
+                        <div className="grow flex flex-col">
+                        </div>
+                    </OverlayPanel>
+                )}
             </div>
             {getBanner()}
         </RendererContext.Provider>

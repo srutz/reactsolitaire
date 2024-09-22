@@ -15,6 +15,7 @@ export type CardRendererProps = {
     card: PlayingCard 
     dragged?: boolean
     width: number
+    cheat?: boolean
     position?: Point
     durationMs?: number
     delayMs?: number
@@ -22,10 +23,10 @@ export type CardRendererProps = {
 } & ComponentProps<"div">
 
 
-export function CardRenderer({ card, dragged, width, ...props }: CardRendererProps) {
+export function CardRenderer({ card, dragged, width, cheat, ...props }: CardRendererProps) {
     const { position, durationMs = 0, delayMs = 0 } = props
     const [releasingDrag, setReleasingDrag] = useState(false)
-    const image = card.side == "back" ? "cards/back.png" : GameUtil.cardToImage(card)
+    const image = !cheat && card.side == "back" ? "cards/back.png" : GameUtil.cardToImage(card)
     const style: CSSProperties = {
         width: width + "px",
         transitionProperty: "all",

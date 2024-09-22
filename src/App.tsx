@@ -1,5 +1,5 @@
 /* (c) Stepan Rutz 2024. All rights reserved. License under the WTFPL */
-import { useCallback, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { Menubar } from "./components/Menubar";
 import { ConfirmDialog, ModalDialog } from "./components/ModalDialog";
 import { Game, useGameContext } from "./game/Game";
@@ -31,6 +31,8 @@ export function Content() {
     const [aboutShown, setAboutShown] = useState(false)
     const [newGameConfirmShown, setNewGameConfirmShown] = useState(false)
     const [stopGameConfirmShown, setStopGameConfirmShown] = useState(false)
+    const [showCheat, setShowCheat] = useState(false)
+    const [cheat, setCheat] = useState(false)
     const context = useGameContext()
     const size = useWindowSize()
     const [ angle, setAngle ] = useState(0)
@@ -63,21 +65,24 @@ export function Content() {
             }
         } else if ("share" == action) {
             shareUrlWithWhatsapp()
+        } else if ("togglecheat" == action) {
+            if (context?.state?.status == "running") {
+                setCheat(!cheat)
+            }
         }
     }
 
     const cards = [ "0H", "JS", "QD", "KH", "AS", "AD" ]
 
-
     return (
         <div className="h-1 grow shrink flex flex-col">
-            <Menubar handleClick={handleMenubarAction} />
+            <Menubar handleClick={handleMenubarAction} showCheat={showCheat}/>
             <div className="relative bg-indigo-800 h-1 grow shrink flex flex-col overflow-hidden">
                 {size.width < 820
                     ? <div className="flex grow items-center justify-center text-center text-7xl font-bold p-4 text-white">Please use a wider browser window</div>
-                    : size.height < 600
+                    : size.height < 640
                     ? <div className="flex grow items-center justify-center text-center text-7xl font-bold p-4 text-white">Please use a taller browser window</div>
-                    :<GameRenderer></GameRenderer>}
+                    :<GameRenderer cheat={cheat}></GameRenderer>}
             </div>
             <StatsPanel></StatsPanel>
             <ModalDialog show={aboutShown} onClose={() => { setAboutShown(false) }} title="About React Solitaire">
@@ -88,6 +93,10 @@ export function Content() {
                     <div className="h-4"></div>
                     <p>Card-Images are are from <ExternalLink href="https://deckofcardsapi.com/"/></p>
                     <p>Made with: Typescript, React, React-Router, Vite, Tailwind</p>
+                    <div className="flex gap-2">
+                        <input type="checkbox" id="cheattoggle" checked={showCheat} onChange={(event: ChangeEvent<HTMLInputElement>) => setShowCheat(event.target.checked) } />
+                        <label htmlFor="cheattoggle" className="select-none">Show/Hide Cheatmode-Toggle</label>
+                        </div>
                     <div className="flex flex-col bg-black p-4 self-strecth items-center relative min-h-64">
                         {cards.map((card, index) => (
                             <div key={index} className="w-32 absolute" style={{ transition: "all 5s ease-in-out", transformOrigin: "bottom center", transform: "rotate(" + (angle * (index - cards.length / 2)) + "deg)" }}>

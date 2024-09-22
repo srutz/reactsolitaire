@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react"
 import { Point } from "../game/CardRenderer"
 import "./StampedBanner.css"
+import { useWindowSize } from "../hooks/WindowSize"
 
 function useRerender() {
     const [, setToggle] = useState(false)
@@ -11,15 +12,16 @@ function useRerender() {
 
 export function StampedBanner({ text }: { text: string }) {
     const rerender = useRerender()
+    const windowSize = useWindowSize()
     const elemRef = useRef<HTMLDivElement>(null)
     useEffect(() => {
         rerender()
     }, [elemRef.current])
 
+    const size = windowSize.width < 1100 ? 100 : 160
     function computePosition(i: number) {
         const availw = elemRef.current?.clientWidth || 0
         const availh = elemRef.current?.clientHeight || 0
-        const size = 100
         const usedw = text.length * size
         const x0 = (availw - usedw) / 2
         const y0 = (availh - size) / 2
@@ -28,17 +30,18 @@ export function StampedBanner({ text }: { text: string }) {
     }
 
     return (
-        <div ref={elemRef} className="h-64 bg-black self-stretch relative">
+        <div ref={elemRef} className="h-64 grow self-stretch relative justify-self-center mb-16">
             {text.split("").map((c, i) => <Stamp text={c} key={i} 
                 position={computePosition(i)} 
+                size={size}
                 keyframes={"pulse" + (i % 4)}
                 delayMs={i * 50}/>)}
         </div>
     )
 }
 
-function Stamp({ text, position, delayMs = 0, keyframes}
-: { text: string, position: Point, delayMs?: number, keyframes: string }) {
+function Stamp({ text, position, size, delayMs = 0, keyframes}
+: { text: string, position: Point, size: number, delayMs?: number, keyframes: string }) {
     if (!text.trim()) {
         return undefined
     }
@@ -65,7 +68,9 @@ function Stamp({ text, position, delayMs = 0, keyframes}
                 style={{ 
                     animationDelay: delayMs + "ms",
                     left: position.x + "px", 
-                    top: position.y + "px" ,
+                    top: position.y + "px",
+                    width: (size - 8) +"px",
+                    height: (size - 8) +"px",
                     animationName: animationName
                 }}>
             {text}

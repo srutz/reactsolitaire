@@ -107,6 +107,7 @@ export function PileRenderer({ pile, clickHandler }: CardPileProps) {
             <CardRenderer 
                 key={i} /* GameUtil.cardId(c) */
                 data-card={GameUtil.cardId(card)} 
+                cheat={rendererContext.cheat}
                 card={card}
                 dragged={allDraggedCards.indexOf(card) != -1}
                 width={geometry.cardWidth}
