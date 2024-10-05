@@ -42,9 +42,6 @@ export function StampedBanner({ text }: { text: string }) {
 
 function Stamp({ text, position, size, delayMs = 0, keyframes}
 : { text: string, position: Point, size: number, delayMs?: number, keyframes: string }) {
-    if (!text.trim()) {
-        return undefined
-    }
     const [animationName,setAnimationName] = useState(keyframes)
     const frameCounter = useRef(0)
     useEffect(() => {
