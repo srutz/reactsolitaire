@@ -23,6 +23,24 @@ export type CardRendererProps = {
 } & ComponentProps<"div">
 
 
+/*
+ * cannot memoize because switching sides doesnt trigger a rerender once this card is memoized
+ * deep compare on card would fix it
+ */
+/*
+export const CardRenderer = memo(CardRenderer_, (prev: CardRendererProps, next: CardRendererProps) => {
+    return prev.card == next.card 
+        && prev.card.side == next.card.side  // <- thinko
+        && prev.dragged == next.dragged 
+        && prev.width == next.width
+        && prev.cheat == next.cheat
+        && prev.position == next.position
+        && prev.durationMs == next.durationMs
+        && prev.delayMs == next.delayMs
+        && prev.zIndex == next.zIndex
+
+})
+*/
 export function CardRenderer({ card, dragged, width, cheat, ...props }: CardRendererProps) {
     "use no memo"
     const { position, durationMs = 0, delayMs = 0 } = props

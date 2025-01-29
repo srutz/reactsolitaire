@@ -3,14 +3,10 @@
 import { useEffect, useRef, useState } from "react"
 import { Point } from "../game/CardRenderer"
 import "./StampedBanner.css"
-import { useWindowSize, WindowSize } from "../hooks/WindowSize"
+import { useWindowSize } from "../hooks/WindowSize"
 
-function useRerender() {
-    const [, setToggle] = useState(false)
-    return () => setToggle(t => !t)
-}
 
-function computePosition(availw: number, availh: number, text: string, size: number, i: number, element?: HTMLDivElement | null) {
+function computePosition(availw: number, availh: number, text: string, size: number, i: number) {
     const usedw = text.length * size
     console.log("text.length = " + text.length)
     console.log("availw = " + availw + ", availh = " + availh + ", usedw = " + usedw)
@@ -40,7 +36,7 @@ export function StampedBanner({ text }: { text: string }) {
     return (
         <div ref={elemRef} className="h-64 grow self-stretch relative justify-self-center mb-16">
             {text.split("").map((c, i) => <Stamp text={c} key={i} 
-                position={computePosition(avail.x, avail.y, text, size, i, elemRef.current)} 
+                position={computePosition(avail.x, avail.y, text, size, i)} 
                 size={size}
                 keyframes={"pulse" + (i % 4)}
                 delayMs={i * 50}/>)}
