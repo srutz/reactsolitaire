@@ -92,7 +92,7 @@ export function Content() {
                     <p>Projectpage incl. sourcecode <ExternalLink href="https://github.com/srutz/reactsolitaire/" />.</p>
                     <div className="h-4"></div>
                     <p>Card-Images are are from <ExternalLink href="https://deckofcardsapi.com/"/></p>
-                    <p>Made with: Typescript, React, React-Router, Vite, Tailwind</p>
+                    <p>Made with: Typescript, React19, React-Router, Vite, Tailwind</p>
                     <div className="flex gap-2">
                         <input type="checkbox" id="cheattoggle" checked={showCheat} onChange={(event: ChangeEvent<HTMLInputElement>) => setShowCheat(event.target.checked) } />
                         <label htmlFor="cheattoggle" className="select-none">Show/Hide Cheatmode-Toggle</label>
