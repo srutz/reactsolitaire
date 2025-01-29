@@ -1,9 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-const ReactCompilerConfig = { 
-    target: '19'
-};
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -11,7 +8,7 @@ export default defineConfig({
         react({
             babel: {
                 plugins: [
-//                    ["babel-plugin-react-compiler", ReactCompilerConfig],
+//                   ["babel-plugin-react-compiler", { target: '19'}],
                 ]
             }
         })
