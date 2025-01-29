@@ -166,7 +166,6 @@ const gameReducer = (state: SolitaireState, action: GameAction) => {
             const s = { ...state }
             const table = GameUtil.findPileForCard(s, action.card)
             let moveAllowed = false
-            debugger
             if (table) {
                 const tableIndex = table.cards.findIndex(c => c == action.card)
                 if (tableIndex != -1 && tableIndex == table.cards.length - 1) {
@@ -188,6 +187,7 @@ const gameReducer = (state: SolitaireState, action: GameAction) => {
                 }
             }
             checkForWin(s, moveAllowed)
+            console.log(s)
             return s
         }
         /* dropping several "cards" onto a table */

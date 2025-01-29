@@ -24,6 +24,7 @@ export type CardRendererProps = {
 
 
 export function CardRenderer({ card, dragged, width, cheat, ...props }: CardRendererProps) {
+    "use no memo"
     const { position, durationMs = 0, delayMs = 0 } = props
     const [releasingDrag, setReleasingDrag] = useState(false)
     const image = !cheat && card.side == "back" ? "cards/back.png" : GameUtil.cardToImage(card)

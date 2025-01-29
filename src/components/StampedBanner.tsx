@@ -3,36 +3,44 @@
 import { useEffect, useRef, useState } from "react"
 import { Point } from "../game/CardRenderer"
 import "./StampedBanner.css"
-import { useWindowSize } from "../hooks/WindowSize"
+import { useWindowSize, WindowSize } from "../hooks/WindowSize"
 
 function useRerender() {
     const [, setToggle] = useState(false)
     return () => setToggle(t => !t)
 }
 
+function computePosition(availw: number, availh: number, text: string, size: number, i: number, element?: HTMLDivElement | null) {
+    const usedw = text.length * size
+    console.log("text.length = " + text.length)
+    console.log("availw = " + availw + ", availh = " + availh + ", usedw = " + usedw)
+    const x0 = (availw - usedw) / 2
+    const y0 = (availh - size) / 2
+    const p: Point = { x: x0 + i * size, y: y0 }
+    return p
+}
 export function StampedBanner({ text }: { text: string }) {
-    const rerender = useRerender()
+    //const rerender = useRerender()
     const windowSize = useWindowSize()
     const elemRef = useRef<HTMLDivElement>(null)
+    const [ avail, setAvail ] = useState<Point>({ x: 0, y: 0 })
+    useEffect(() => {
+        if (elemRef.current) {
+            setAvail({ x: elemRef.current.clientWidth, y: elemRef.current.clientHeight })
+        }
+    }, [elemRef.current, windowSize])
+
+    /*
     useEffect(() => {
         rerender()
-    }, [elemRef.current])
+    }, [elemRef.current ])
+    */
 
     const size = windowSize.width < 1100 ? 100 : 160
-    function computePosition(i: number) {
-        const availw = elemRef.current?.clientWidth || 0
-        const availh = elemRef.current?.clientHeight || 0
-        const usedw = text.length * size
-        const x0 = (availw - usedw) / 2
-        const y0 = (availh - size) / 2
-        const p: Point = { x: x0 + i * size, y: y0 }
-        return p
-    }
-
     return (
         <div ref={elemRef} className="h-64 grow self-stretch relative justify-self-center mb-16">
             {text.split("").map((c, i) => <Stamp text={c} key={i} 
-                position={computePosition(i)} 
+                position={computePosition(avail.x, avail.y, text, size, i, elemRef.current)} 
                 size={size}
                 keyframes={"pulse" + (i % 4)}
                 delayMs={i * 50}/>)}
