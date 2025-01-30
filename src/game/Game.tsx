@@ -164,6 +164,7 @@ const gameReducer = (state: SolitaireState, action: GameAction) => {
         /* draw from a table, try to put "card" onto a stack if its the card's turn */
         case "draw-table": {
             const s = { ...state }
+            //const s = structuredClone(state)
             const table = GameUtil.findPileForCard(s, action.card)
             let moveAllowed = false
             if (table) {
@@ -187,7 +188,6 @@ const gameReducer = (state: SolitaireState, action: GameAction) => {
                 }
             }
             checkForWin(s, moveAllowed)
-            console.log(s)
             return s
         }
         /* dropping several "cards" onto a table */

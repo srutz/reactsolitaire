@@ -41,11 +41,20 @@ export const CardRenderer = memo(CardRenderer_, (prev: CardRendererProps, next: 
 
 })
 */
-export function CardRenderer({ card, dragged, width, cheat, ...props }: CardRendererProps) {
+export function CardRenderer({ card, dragged, width, cheat, position, durationMs = 0, delayMs = 0, zIndex, onClick }: CardRendererProps) {
     "use no memo"
-    const { position, durationMs = 0, delayMs = 0 } = props
     const [releasingDrag, setReleasingDrag] = useState(false)
     const image = !cheat && card.side == "back" ? "cards/back.png" : GameUtil.cardToImage(card)
+    /*
+    if (card.rank == "2" && card.suit == "diamonds") {
+        console.log("rerender ", cheat, card.side, card.side == "back", image, GameUtil.cardToImage(card))
+    }
+    useEffect(() => {
+        if (card.rank == "2" && card.suit == "diamonds") {
+            console.log("Prop `value` changed:", card, dragged, width, cheat, position, durationMs, delayMs, zIndex)
+        }
+      }, [ card, dragged, width, cheat, position, durationMs, delayMs, zIndex ])
+    */
     const style: CSSProperties = {
         width: width + "px",
         transitionProperty: "all",
@@ -53,7 +62,7 @@ export function CardRenderer({ card, dragged, width, cheat, ...props }: CardRend
         transitionDelay: delayMs + "ms",
         left: position?.x !== undefined ? position.x + "px" : "auto",
         top: position?.y !== undefined ? position.y + "px" : "auto",
-        zIndex: props.zIndex || "auto"
+        zIndex: zIndex || "auto"
     }
     // if not dragged animate always
     if (!dragged) {
@@ -76,10 +85,14 @@ export function CardRenderer({ card, dragged, width, cheat, ...props }: CardRend
     }, [dragged])
     const clazzes = [ ..."flex items-center cursor-pointer select-none absolute".split(" ")
         , dragged ? "xshadow-custom-large" : "" ]
+    //if (card.rank == "2" && card.suit == "diamonds") {
+    //    console.log("rerender2 ", cheat, card.side, image)
+    //}
+    // weirdness, the + "" fixes the memoization of image
     return (        
-        <div data-card={GameUtil.cardId(card)} className={clazzes.join(" ")} style={style} onClick={props.onClick}>
+        <div data-card={GameUtil.cardId(card)} className={clazzes.join(" ")} style={style} onClick={onClick}>
             <div className="bg-white border shadow-lg rounded-lg flex justify-center items-center" >
-                <img draggable="false" className="select-none " src={image} alt={GameUtil.cardToString(card)} />
+                <img draggable="false" className="select-none " src={image + ""} alt={GameUtil.cardToString(card)} />
             </div>
         </div>
     )
