@@ -42,11 +42,13 @@ export function PileRenderer({ pile, clickHandler }: CardPileProps) {
     if (!rendererContext) {
         return <div>no renderer context</div>
     }
-    const { 
-        draggedCard, 
-        dragPosition, 
-        allDraggedCards, 
-        destinationPile, 
+    const {
+        draggedCard,
+        dragPosition,
+        allDraggedCards,
+        destinationPile,
+        validDropPiles,
+        cheat,
         geometry,
         availableSize } = rendererContext
     //console.log("dragPosition.x = " + dragPosition?.x + ", dragPosition.y = " + dragPosition?.y + ", draggedCard = " + draggedCard)
@@ -116,6 +118,16 @@ export function PileRenderer({ pile, clickHandler }: CardPileProps) {
                 position={computePosition(pile, card, i)}
                 zIndex={computeZIndex(card)}
                 onClick={() => { clickHandler(pile, card) }} />)}
+        {cheat && validDropPiles.includes(pile) && (
+            <div className="absolute pointer-events-none border-2 border-dashed border-yellow-400 rounded-lg"
+                 style={{
+                     left: x + "px",
+                     top: (y + Math.max(0, pile.cards.length - 1) * getStackingDistance(geometry.scale, pile.type)) + "px",
+                     width: geometry.cardWidth + "px",
+                     height: geometry.cardHeight + "px",
+                     zIndex: DRAG_LAYER - 1,
+                 }} />
+        )}
         {destinationPile == pile && <PileOverlay pile={pile} geometry={geometry} style={overlayStyle} />}
     </>
 }

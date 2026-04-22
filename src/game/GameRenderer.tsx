@@ -1,6 +1,6 @@
 /* (c) Stepan Rutz 2024. All rights reserved. License under the WTFPL */
 import { createContext, ReactNode, useCallback, useContext, useRef, useState } from "react"
-import { useGameContext } from "./Game"
+import { stackMoveAllowed, suitToIndex, tableMoveAllowed, useGameContext } from "./Game"
 import { useWindowSize } from "../hooks/WindowSize"
 import { PileRenderer } from "./PileRenderer"
 import { GameUtil } from "./CardUtil"
@@ -51,6 +51,7 @@ export type RendererContextType = {
     allDraggedCards: PlayingCard[]
     dragPosition?: { x: number, y: number }
     destinationPile?: Pile
+    validDropPiles: Pile[]
     geometry: Geometry
     availableSize: Size
     cheat?: boolean
@@ -130,6 +131,8 @@ export function GameRenderer({ cheat }: { cheat?: boolean }) {
         if (draggedCard) {
             if (destinationPile?.type === "table") {
                 gameContext?.dispatch({ type: "drop-table", cards: allDraggedCards, table: destinationPile })
+            } else if (destinationPile?.type === "stack" && allDraggedCards.length === 1) {
+                gameContext?.dispatch({ type: "drop-stack", card: allDraggedCards[0], stack: destinationPile })
             }
         }
         setDraggedCard(undefined)
@@ -149,6 +152,27 @@ export function GameRenderer({ cheat }: { cheat?: boolean }) {
     if (!gameContext?.state) {
         return <div>Not initialized</div>
     }
+    const state = gameContext.state
+    const validDropPiles: Pile[] = (() => {
+        if (!cheat || !draggedCard || allDraggedCards.length === 0) {
+            return []
+        }
+        const head = allDraggedCards[0]
+        const source = GameUtil.findPileForCard(state, head)
+        const result: Pile[] = []
+        for (const t of state.tables) {
+            if (t !== source && tableMoveAllowed(t, head)) {
+                result.push(t)
+            }
+        }
+        if (allDraggedCards.length === 1) {
+            const target = state.stacks[suitToIndex(head.suit)]
+            if (target !== source && stackMoveAllowed(target, head)) {
+                result.push(target)
+            }
+        }
+        return result
+    })()
     const clickHandler = (pile: Pile, card?: PlayingCard) => {
         //console.log("click on: " + GameUtil.cardToString(card) + " in " + pile.type + "[" + pile.index + "]")
         if (card && pile.type === "stock") {
@@ -265,7 +289,7 @@ export function GameRenderer({ cheat }: { cheat?: boolean }) {
     }
     const availableSize = { width: elemRef.current?.clientWidth || 0, height: elemRef.current?.clientHeight || 0 }
     return (
-        <RendererContext.Provider value={{ draggedCard, dragPosition, destinationPile, allDraggedCards, geometry, availableSize, cheat }}>
+        <RendererContext.Provider value={{ draggedCard, dragPosition, destinationPile, allDraggedCards, validDropPiles, geometry, availableSize, cheat }}>
             <div className="h-1 grow shrink flex flex-col bg-gray-500 p-4 relative">
                 <div ref={elemRef} className="h-1 grow shrink flex flex-col bg-gray-500 p-4 relative"
                         onMouseDown={mouseDown} onMouseMove={mouseMove} onMouseUp={endDrag} onMouseLeave={endDrag} 

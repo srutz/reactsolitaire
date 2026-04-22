@@ -8,7 +8,7 @@ import { useSearchParams } from "react-router-dom"
 
 
 /* helper to convert suit to index */
-function suitToIndex(suit: Suit) {
+export function suitToIndex(suit: Suit) {
     switch (suit) {
         case "clubs": return 0
         case "spades": return 1
@@ -23,7 +23,7 @@ function rankToIndex(rank: Rank) {
     return "A234567890JQK".indexOf(a)
 }
 
-function stackMoveAllowed(stack: Pile, card: PlayingCard) {
+export function stackMoveAllowed(stack: Pile, card: PlayingCard) {
     if (stack.cards.length == 0) {
         if (card.rank == "A") {
             return true
@@ -41,7 +41,7 @@ function stackMoveAllowed(stack: Pile, card: PlayingCard) {
     return false
 }
 
-function tableMoveAllowed(table: Pile, card: PlayingCard) {
+export function tableMoveAllowed(table: Pile, card: PlayingCard) {
     if (table.cards.length == 0) {
         return true
     } else {
@@ -86,6 +86,7 @@ export type GameAction =
     | { type: "draw-waste"; card: PlayingCard }
     | { type: "draw-table"; card: PlayingCard, side: Side }
     | { type: "drop-table"; cards: PlayingCard[]; table: Pile }
+    | { type: "drop-stack"; card: PlayingCard; stack: Pile }
     | { type: "empty-stock"; }
     ;
 
@@ -186,6 +187,24 @@ const gameReducer = (state: SolitaireState, action: GameAction) => {
                         }
                     }
                 }
+            }
+            checkForWin(s, moveAllowed)
+            return s
+        }
+        /* dropping a single card onto a foundation stack */
+        case "drop-stack": {
+            console.assert(action.stack?.type == "stack", "drop-stack: pile is not a stack")
+            const s = { ...state }
+            const card = action.card
+            const pile = GameUtil.findPileForCard(s, card)
+            let moveAllowed = false
+            if (pile && pile != action.stack
+                && s.stacks[suitToIndex(card.suit)] == action.stack
+                && stackMoveAllowed(action.stack, card)) {
+                Util.removeElement(pile.cards, card)
+                action.stack.cards.push(card)
+                s.stats.points += 10
+                moveAllowed = true
             }
             checkForWin(s, moveAllowed)
             return s
